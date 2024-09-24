@@ -85,7 +85,24 @@
             flex-direction: column;
         }
         .slider {
-            width: 70%;
+            width: 84%;
+            height: 24px; /* Увеличение высоты ползунка */
+            -webkit-appearance: none;
+            background: #ddd;
+            border-radius: 10px;
+            outline: none;
+            transition: background 0.3s;
+            cursor: pointer;
+            padding: 10px; /* Расширение активной зоны */
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
         }
         .notification {
             background-color: #ffeb3b;
@@ -173,6 +190,4 @@
 
 </body>
 </html>
-
-
 
