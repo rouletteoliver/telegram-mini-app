@@ -76,6 +76,7 @@
             align-items: center;
             justify-content: center;
             width: 80%;
+            flex-direction: column;
         }
         .slider {
             width: 70%;
@@ -85,6 +86,7 @@
             padding: 10px;
             margin: 20px 0;
             border: 1px solid #ccc;
+            text-align: center;
         }
     </style>
 </head>
@@ -97,26 +99,73 @@
 </div>
 
 <div class="balance">Баланс: 100</div>
-<div class="win-loss">win/loss</div>
-<div class="result">результат</div>
+<div class="win-loss" id="win-loss">win/loss</div>
+<div class="result" id="result">результат</div>
 
 <div class="coin-container">
-    <div class="coin green">✔️</div>
-    <div class="coin red">❌</div>
+    <div class="coin green" id="heads">✔️</div>
+    <div class="coin red" id="tails">❌</div>
 </div>
 
 <div class="slider-container">
-    <input type="range" min="1" max="100" value="50" class="slider">
+    <input type="range" min="1" max="100" value="50" class="slider" id="bet-slider">
+    <div class="notification" id="bet-display">Ставка: 50 монет</div>
 </div>
-
-<div class="notification">test</div>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-    // Инициализация Telegram Web App
+    // Инициализация
+    const balanceElement = document.querySelector('.balance');
+    const winLossElement = document.getElementById('win-loss');
+    const resultElement = document.getElementById('result');
+    const betDisplay = document.getElementById('bet-display');
+    const slider = document.getElementById('bet-slider');
+    let balance = 100;
+
+    // Обновление отображения ставки при движении ползунка
+    slider.addEventListener('input', function() {
+        betDisplay.textContent = `Ставка: ${slider.value} монет`;
+    });
+
+    // Обработка нажатия на кнопку "Орёл"
+    document.getElementById('heads').addEventListener('click', function() {
+        playGame('Орёл');
+    });
+
+    // Обработка нажатия на кнопку "Решка"
+    document.getElementById('tails').addEventListener('click', function() {
+        playGame('Решка');
+    });
+
+    // Функция игры
+    function playGame(choice) {
+        const bet = parseInt(slider.value);
+        const outcome = Math.random() < 0.5 ? 'Орёл' : 'Решка';
+        resultElement.textContent = `Выпало: ${outcome}`;
+
+        if (choice === outcome) {
+            balance += bet;
+            winLossElement.textContent = 'Победа!';
+        } else {
+            balance -= bet;
+            winLossElement.textContent = 'Поражение!';
+        }
+
+        // Обновляем баланс
+        balanceElement.textContent = `Баланс: ${balance}`;
+
+        // Проверка на нулевой баланс
+        if (balance <= 0) {
+            alert('У вас закончились деньги! Игра окончена.');
+            balance = 100; // Сброс баланса
+            balanceElement.textContent = `Баланс: ${balance}`;
+        }
+    }
+
     Telegram.WebApp.ready();
 </script>
 
 </body>
 </html>
+
 
