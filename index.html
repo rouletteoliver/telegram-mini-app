@@ -64,12 +64,18 @@
             border-radius: 50%;
             border: 2px solid #000;
             cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .coin:active {
+            transform: scale(0.9);
         }
         .coin.green {
-            background-color: #c8e6c9;
+            background-image: url('heads.png'); /* Путь к изображению орла */
+            background-size: cover;
         }
         .coin.red {
-            background-color: #ffcdd2;
+            background-image: url('tails.png'); /* Путь к изображению решки */
+            background-size: cover;
         }
         .slider-container {
             display: flex;
@@ -103,8 +109,8 @@
 <div class="result" id="result">результат</div>
 
 <div class="coin-container">
-    <div class="coin green" id="heads">✔️</div>
-    <div class="coin red" id="tails">❌</div>
+    <div class="coin green" id="heads"></div>
+    <div class="coin red" id="tails"></div>
 </div>
 
 <div class="slider-container">
@@ -167,5 +173,6 @@
 
 </body>
 </html>
+
 
 
