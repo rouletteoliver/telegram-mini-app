@@ -5,61 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Игра Орёл или Решка</title>
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-    body {
-        font-family: 'Roboto', sans-serif;
-    }
-    </style>
-<head>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
         body {
+            font-family: 'Roboto', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
             background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 10px;
+            background-color: #e0e0e0;
+            border-bottom: 1px solid #ccc;
+        }
+        .header button {
+            border: none;
+            background: none;
+            font-size: 16px;
+            cursor: not-allowed;
+        }
+        .balance {
+            font-size: 20px;
+            margin: 20px 0;
+        }
+        .win-loss {
+            border: 2px solid #000;
+            padding: 10px;
+            margin: 10px 0;
+            width: 100px;
             text-align: center;
         }
-        .button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 10px;
+        .result {
+            border: 2px solid #000;
+            padding: 20px;
+            margin: 20px 0;
+            width: 150px;
+            text-align: center;
+        }
+        .coin-container {
+            display: flex;
+            justify-content: space-around;
+            width: 80%;
+            margin: 20px 0;
+        }
+        .coin {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid #000;
             cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            background-color: #4CAF50;
-            color: white;
+        }
+        .coin.green {
+            background-color: #c8e6c9;
+        }
+        .coin.red {
+            background-color: #ffcdd2;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 80%;
+        }
+        .slider {
+            width: 70%;
+        }
+        .notification {
+            background-color: #ffeb3b;
+            padding: 10px;
+            margin: 20px 0;
+            border: 1px solid #ccc;
         }
     </style>
 </head>
 <body>
-    <h1>Игра Орёл или Решка</h1>
-    <button id="heads" class="button">Орёл</button>
-    <button id="tails" class="button">Решка</button>
-    <p id="result"></p>
 
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script>
-        document.getElementById('heads').addEventListener('click', () => {
-            flipCoin('Орёл');
-        });
+<div class="header">
+    <button>search game</button>
+    <button class="active">game</button>
+    <button>profile</button>
+</div>
 
-        document.getElementById('tails').addEventListener('click', () => {
-            flipCoin('Решка');
-        });
+<div class="balance">Баланс: 100</div>
+<div class="win-loss">win/loss</div>
+<div class="result">результат</div>
 
-        function flipCoin(choice) {
-            const outcome = Math.random() < 0.5 ? 'Орёл' : 'Решка';
-            const resultText = outcome === choice ? 'Вы выиграли!' : 'Вы проиграли!';
-            document.getElementById('result').textContent = `Выпало: ${outcome}. ${resultText}`;
+<div class="coin-container">
+    <div class="coin green">✔️</div>
+    <div class="coin red">❌</div>
+</div>
 
-            // Завершение работы веб-приложения
-            Telegram.WebApp.close();
-        }
+<div class="slider-container">
+    <input type="range" min="1" max="100" value="50" class="slider">
+</div>
 
-        // Инициализация Telegram Web App
-        Telegram.WebApp.ready();
-    </script>
+<div class="notification">test</div>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+    // Добавь здесь JS логику по мере необходимости для обработки действий и обновлений
+    Telegram.WebApp.ready();
+</script>
+
 </body>
 </html>
