@@ -76,11 +76,13 @@
             font-size: 14px;
         }
         .connect-btn {
-            margin-top: 20px;
-            padding: 10px;
+            margin-top: 50px; /* Значительно увеличенный отступ сверху */
+            padding: 15px 30px;
             border: 1px solid #ccc;
             cursor: not-allowed;
             background-color: #e0e0e0;
+            font-size: 16px;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -100,13 +102,12 @@
     <div class="wallet-info" id="wallet-address">Кошелёк не подключён</div>
     <div class="profile-details">
         <div>
-            <div class="avatar"></div>
+            <div class="avatar" id="avatar"></div>
             <div id="nickname">Имя</div>
         </div>
         <div>
             <div class="winrate-info">
                 <strong>Winrate:</strong> —<br>
-                <strong>Игр сыграно:</strong> —<br>
                 <strong>Побед:</strong> —<br>
                 <strong>Поражений:</strong> —<br>
             </div>
@@ -117,13 +118,25 @@
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-    const gameButton = document.getElementById('game-button');
+    // Получение данных пользователя Telegram
+    Telegram.WebApp.ready();
+    const user = Telegram.WebApp.initDataUnsafe.user;
+    
+    // Установка имени и аватара
+    if (user) {
+        document.getElementById('nickname').textContent = user.first_name || 'Имя';
+        const avatar = document.getElementById('avatar');
+        if (user.photo_url) {
+            avatar.style.backgroundImage = `url(${user.photo_url})`;
+            avatar.style.backgroundSize = 'cover';
+        }
+    }
 
+    // Переход на страницу игры
+    const gameButton = document.getElementById('game-button');
     gameButton.addEventListener('click', () => {
         window.location.href = 'game.html';
     });
-
-    Telegram.WebApp.ready();
 </script>
 
 </body>
