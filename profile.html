@@ -161,15 +161,29 @@
             if (window.ethereum) {
                 try {
                     const provider = new ethers.providers.Web3Provider(window.ethereum);
-                    await provider.send("eth_requestAccounts", []);
+                    console.log('Провайдер инициализирован:', provider);
+
+                    // Запрос доступа к аккаунтам
+                    const accounts = await provider.send("eth_requestAccounts", []);
+                    console.log('Аккаунты получены:', accounts);
+
+                    // Проверка наличия подключенного аккаунта
+                    if (accounts.length === 0) {
+                        console.error('Аккаунты не обнаружены.');
+                        alert('Нет доступных аккаунтов. Проверьте MetaMask.');
+                        return;
+                    }
+
                     const signer = provider.getSigner();
                     const account = await signer.getAddress();
+                    console.log('Подключен кошелек:', account);
                     walletAddress.textContent = account;
                     connectBtn.textContent = 'disconnect evm';
                     connectBtn.classList.add('disconnect-btn');
                 } catch (error) {
                     console.error('Ошибка при подключении к кошельку:', error);
                     walletAddress.textContent = 'Ошибка подключения';
+                    alert('Ошибка подключения к кошельку. Проверьте настройки MetaMask и разрешения.');
                 }
             } else {
                 alert('Пожалуйста, установите MetaMask или другой EVM-совместимый кошелек!');
