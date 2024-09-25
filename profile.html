@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script> <!-- Подключение Web3.js -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -77,9 +79,11 @@
             margin-top: 50px;
             padding: 15px 30px;
             border: 1px solid #ccc;
-            cursor: not-allowed;
-            background-color: #e0e0e0;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
             font-size: 16px;
+            border-radius: 5px;
         }
         .winrate-info {
             text-align: left;
@@ -114,14 +118,14 @@
             </div>
         </div>
     </div>
-    <button class="connect-btn">connect evm</button>
+    <button id="connect-evm" class="connect-btn">connect evm</button>
 </div>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
     const tg = window.Telegram.WebApp;
     const nickname = document.getElementById('nickname');
     const avatar = document.getElementById('avatar');
+    const walletAddress = document.getElementById('wallet-address');
 
     function updateUserData() {
         // Проверяем, инициализирован ли объект tg и есть ли данные пользователя
@@ -147,6 +151,23 @@
     // Инициализация Telegram WebApp и обновление данных пользователя
     tg.ready();
     updateUserData();
+
+    // Подключение к EVM кошельку
+    document.getElementById('connect-evm').addEventListener('click', async () => {
+        if (window.ethereum) {
+            try {
+                // Запрашиваем доступ к аккаунту
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const account = accounts[0];
+                walletAddress.textContent = account; // Устанавливаем публичный адрес кошелька
+            } catch (error) {
+                console.error('Ошибка при подключении к кошельку:', error);
+                walletAddress.textContent = 'Ошибка подключения';
+            }
+        } else {
+            alert('Пожалуйста, установите MetaMask или другой EVM-совместимый кошелек!');
+        }
+    });
 
     // Обработка нажатия на кнопку game
     document.getElementById('game-button').addEventListener('click', () => {
