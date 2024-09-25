@@ -31,40 +31,60 @@
             border: none;
             background: none;
             font-size: 16px;
-            cursor: not-allowed;
+            cursor: pointer;
         }
-        .balance-container {
+        .active {
+            font-weight: bold;
+            color: blue;
+        }
+        .hidden {
+            display: none;
+        }
+        .balance-container, .profile-container {
             display: flex;
             align-items: center;
             margin: 10px 0;
-        }
-        .refresh-button {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: 1px solid #ccc;
-            background-color: #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            margin-right: 10px;
         }
         .balance {
             font-size: 20px;
         }
-        .win-loss, .result {
-            border: 2px solid #000;
-            padding: 10px;
-            margin: 10px 0;
-            width: 150px;
-            text-align: center;
+        .profile-container {
+            flex-direction: column;
+            align-items: flex-start;
         }
-        .coin-container {
-            display: flex;
-            justify-content: space-around;
+        .wallet-info {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .coin-container, .slider-container, .profile-details {
             width: 90%;
             margin: 10px 0;
+            text-align: center;
+        }
+        .profile-details {
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+        }
+        .profile-details div {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            background-color: #ddd;
+        }
+        .connect-btn {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            cursor: not-allowed;
+            background-color: #e0e0e0;
         }
         .coin {
             width: 80px;
@@ -80,13 +100,6 @@
         }
         #tails {
             background-image: url('tails.png');
-        }
-        .slider-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 80%;
-            flex-direction: column;
         }
         .slider {
             width: 84%;
@@ -115,35 +128,64 @@
             border: 1px solid #ccc;
             text-align: center;
         }
+        .disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <button>search game</button>
-    <button class="active">game</button>
-    <button>profile</button>
+    <button id="search-button" class="inactive">search game</button>
+    <button id="game-button" class="active">game</button>
+    <button id="profile-button">profile</button>
 </div>
 
-<div class="balance-container">
-    <div class="refresh-button" id="refresh">🔄</div>
-    <div class="balance" id="balance">Баланс: 100</div>
-</div>
-<div class="win-loss" id="win-loss">win/loss</div>
-<div class="result" id="result">результат</div>
+<!-- Game Page -->
+<div id="game-page">
+    <div class="balance-container">
+        <div class="balance" id="balance">Баланс: 100</div>
+        <div class="refresh-button" id="refresh">🔄</div>
+    </div>
+    <div class="win-loss" id="win-loss">win/loss</div>
+    <div class="result" id="result">результат</div>
 
-<div class="coin-container">
-    <div class="coin" id="heads"></div>
-    <div class="coin" id="tails"></div>
+    <div class="coin-container">
+        <div class="coin" id="heads"></div>
+        <div class="coin" id="tails"></div>
+    </div>
+
+    <div class="slider-container">
+        <input type="range" min="1" max="100" value="50" class="slider" id="bet-slider">
+        <div class="notification" id="bet-display">Ставка: 50 монет</div>
+    </div>
 </div>
 
-<div class="slider-container">
-    <input type="range" min="1" max="100" value="50" class="slider" id="bet-slider">
-    <div class="notification" id="bet-display">Ставка: 50 монет</div>
+<!-- Profile Page -->
+<div id="profile-page" class="hidden">
+    <div class="balance-container">
+        <div class="balance">Баланс: <span id="wallet-balance">0 Hitcoin</span></div>
+    </div>
+    <div class="wallet-info" id="wallet-address">Кошелёк не подключён</div>
+    <div class="profile-details">
+        <div>
+            <div class="avatar"></div>
+            <div id="nickname">Имя</div>
+        </div>
+        <div>
+            <div id="winrate">Winrate: —</div>
+        </div>
+    </div>
+    <button class="connect-btn">connect evm</button>
 </div>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
+    const gamePage = document.getElementById('game-page');
+    const profilePage = document.getElementById('profile-page');
+    const gameButton = document.getElementById('game-button');
+    const profileButton = document.getElementById('profile-button');
     const balanceElement = document.getElementById('balance');
     const winLossElement = document.getElementById('win-loss');
     const resultElement = document.getElementById('result');
@@ -154,6 +196,22 @@
     const tailsButton = document.getElementById('tails');
     let balance = parseInt(localStorage.getItem('balance')) || 100;
 
+    // Переключение между страницами
+    gameButton.addEventListener('click', () => {
+        gamePage.classList.remove('hidden');
+        profilePage.classList.add('hidden');
+        gameButton.classList.add('active');
+        profileButton.classList.remove('active');
+    });
+
+    profileButton.addEventListener('click', () => {
+        gamePage.classList.add('hidden');
+        profilePage.classList.remove('hidden');
+        gameButton.classList.remove('active');
+        profileButton.classList.add('active');
+    });
+
+    // Функция для обновления интерфейса
     function updateUI() {
         balanceElement.textContent = `Баланс: ${balance}`;
         const bet = parseInt(slider.value);
@@ -166,11 +224,13 @@
         }
     }
 
+    // Управление слайдером
     slider.addEventListener('input', function() {
         betDisplay.textContent = `Ставка: ${slider.value} монет`;
         updateUI();
     });
 
+    // Игра с кнопками
     headsButton.addEventListener('click', function() {
         if (!headsButton.classList.contains('disabled')) {
             playGame('Орёл');
@@ -183,17 +243,13 @@
         }
     });
 
+    // Функция игры
     function playGame(choice) {
         const bet = parseInt(slider.value);
-        const outcome = Math.random() < 0.5 ? 'Орёл' : 'Решка';
-        resultElement.textContent = `Выпало: ${outcome}`;
+        const result = Math.random() < 0.5 ? 'Орёл' : 'Решка';
+        resultElement.textContent = `Выпало: ${result}`;
 
-        if (bet > balance) {
-            winLossElement.textContent = 'Недостаточно средств для ставки';
-            return;
-        }
-
-        if (choice === outcome) {
+        if (result === choice) {
             balance += bet;
             winLossElement.textContent = 'Победа!';
         } else {
@@ -203,24 +259,20 @@
 
         localStorage.setItem('balance', balance);
         updateUI();
-
-        if (balance <= 0) {
-            winLossElement.textContent = 'Баланс нулевой';
-        }
     }
 
+    // Обновление баланса
     refreshButton.addEventListener('click', function() {
-        if (balance <= 0) {
-            balance = 100;
-            localStorage.setItem('balance', balance);
-            winLossElement.textContent = 'Баланс обновлён';
-            updateUI();
-        }
+        balance = 100;
+        localStorage.setItem('balance', balance);
+        updateUI();
     });
 
+    // Инициализация
+    updateUI();
     Telegram.WebApp.ready();
-    updateUI(); // Обновление интерфейса при запуске
 </script>
 
 </body>
 </html>
+
