@@ -139,6 +139,7 @@
     let provider;
     const abi = ["function balanceOf(address account) view returns (uint256)"];
 
+    // Инициализация данных пользователя Telegram
     function updateUserData() {
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             nickname.textContent = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || 'Имя не найдено';
@@ -156,14 +157,21 @@
         }
     }
 
+    // Инициализация провайдера
     async function initializeProvider() {
-        try {
+        if (window.ethereum) {
             provider = new ethers.providers.Web3Provider(window.ethereum);
-        } catch (error) {
-            console.error('Ошибка инициализации провайдера:', error);
+            try {
+                await provider.send("eth_requestAccounts", []); // Проверка на подключение к кошельку
+            } catch (error) {
+                console.error('Ошибка доступа к аккаунтам Ethereum:', error);
+            }
+        } else {
+            alert('MetaMask или другой EVM-совместимый кошелек не обнаружен.');
         }
     }
 
+    // Получение баланса токенов
     async function getTokenBalance(account) {
         try {
             const contract = new ethers.Contract(contractAddress, abi, provider);
@@ -179,22 +187,24 @@
     updateUserData();
     initializeProvider();
 
+    // Обработка нажатия кнопки подключения кошелька
     connectBtn.addEventListener('click', async () => {
         if (connectBtn.textContent === 'connect evm') {
-            if (window.ethereum) {
-                try {
-                    const accounts = await provider.send("eth_requestAccounts", []);
+            try {
+                const accounts = await provider.listAccounts(); // Получение списка аккаунтов
+                if (accounts.length > 0) {
                     const account = accounts[0];
                     walletAddress.textContent = account;
                     connectBtn.textContent = 'disconnect evm';
                     connectBtn.classList.add('disconnect-btn');
                     await getTokenBalance(account); // Получаем баланс токенов после подключения
-                } catch (error) {
-                    console.error('Ошибка при подключении к кошельку:', error);
-                    walletAddress.textContent = 'Ошибка подключения';
+                } else {
+                    alert('Не удалось подключиться к кошельку. Проверьте MetaMask.');
                 }
-            } else {
-                alert('Пожалуйста, установите MetaMask или другой EVM-совместимый кошелек!');
+            } catch (error) {
+                console.error('Ошибка при подключении к кошельку:', error);
+                walletAddress.textContent = 'Ошибка подключения';
+                alert('Ошибка подключения к кошельку. Попробуйте снова.');
             }
         } else {
             walletAddress.textContent = 'Кошелёк не подключён';
@@ -204,6 +214,7 @@
         }
     });
 
+    // Переход на страницу игры
     document.getElementById('game-button').addEventListener('click', () => {
         window.location.href = 'game.html';
     });
