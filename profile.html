@@ -158,19 +158,21 @@
 
     connectBtn.addEventListener('click', async () => {
     if (connectBtn.textContent === 'connect evm') {
-        if (window.ethereum && window.ethereum.isMetaMask) {
-            try {
+        try {
+            // Проверка наличия MetaMask и отправка запроса через deeplink
+            if (window.ethereum && window.ethereum.isMetaMask) {
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 const account = accounts[0];
                 walletAddress.textContent = account;
                 connectBtn.textContent = 'disconnect evm';
                 connectBtn.classList.add('disconnect-btn');
-            } catch (error) {
-                console.error('Ошибка при подключении к кошельку:', error);
-                walletAddress.textContent = 'Ошибка подключения';
+            } else {
+                // Deeplink для открытия MetaMask на мобильных устройствах
+                window.location.href = 'https://metamask.app.link/dapp/' + window.location.href.replace(/^https?:\/\//, '');
             }
-        } else {
-            alert('Пожалуйста, установите MetaMask или другой EVM-совместимый кошелек!');
+        } catch (error) {
+            console.error('Ошибка при подключении к кошельку:', error);
+            walletAddress.textContent = 'Ошибка подключения к кошельку';
         }
     } else {
         walletAddress.textContent = 'Кошелёк не подключён';
@@ -178,6 +180,7 @@
         connectBtn.classList.remove('disconnect-btn');
     }
 });
+
 
 </script>
 
