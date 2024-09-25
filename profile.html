@@ -156,14 +156,26 @@
     tg.ready();
     updateUserData();
 
-    connectBtn.addEventListener('click', async () => {
+    // Проверяем сохраненное состояние подключения при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    const savedAddress = localStorage.getItem('walletAddress');
+    if (savedAddress) {
+        walletAddress.textContent = savedAddress;
+        connectBtn.textContent = 'disconnect evm';
+        connectBtn.classList.add('disconnect-btn');
+    }
+});
+
+// Обработчик для кнопки подключения
+connectBtn.addEventListener('click', async () => {
     if (connectBtn.textContent === 'connect evm') {
         try {
-            // Проверка наличия MetaMask и отправка запроса через deeplink
+            // Проверка наличия MetaMask и отправка запроса на подключение
             if (window.ethereum && window.ethereum.isMetaMask) {
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 const account = accounts[0];
                 walletAddress.textContent = account;
+                localStorage.setItem('walletAddress', account); // Сохраняем адрес кошелька
                 connectBtn.textContent = 'disconnect evm';
                 connectBtn.classList.add('disconnect-btn');
             } else {
@@ -175,11 +187,14 @@
             walletAddress.textContent = 'Ошибка подключения к кошельку';
         }
     } else {
+        // Отключаем кошелек и очищаем сохраненные данные
+        localStorage.removeItem('walletAddress');
         walletAddress.textContent = 'Кошелёк не подключён';
         connectBtn.textContent = 'connect evm';
         connectBtn.classList.remove('disconnect-btn');
     }
 });
+
 
 
 </script>
