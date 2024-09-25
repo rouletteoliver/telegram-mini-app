@@ -156,40 +156,13 @@
     tg.ready();
     updateUserData();
 
-    // Подключение WalletConnect без Infura
-import Web3Modal from 'web3modal';
-import WalletConnectProvider from '@walletconnect/web3-provider';
-
-const providerOptions = {
-    walletconnect: {
-        package: WalletConnectProvider,
-        options: {
-            rpc: {
-                1: "https://mainnet.infura.io/v3/", // Можно использовать публичные RPC сервера, например Alchemy, QuickNode
-            }
-        }
-    }
-};
-
-const web3Modal = new Web3Modal({
-    cacheProvider: false,
-    providerOptions,
+    connectBtn.addEventListener('click', () => {
+    window.location.href = 'connect.html'; // Переход на страницу подключения
 });
 
-connectBtn.addEventListener('click', async () => {
-    try {
-        const instance = await web3Modal.connect();
-        const provider = new Web3(instance);
-        const accounts = await provider.eth.getAccounts();
-        const account = accounts[0];
-        walletAddress.textContent = account;
-        connectBtn.textContent = 'disconnect evm';
-        connectBtn.classList.add('disconnect-btn');
-    } catch (error) {
-        console.error('Ошибка подключения:', error);
-        walletAddress.textContent = 'Ошибка подключения';
-    }
-});
+    document.getElementById('game-button').addEventListener('click', () => {
+        window.location.href = 'game.html';
+    });
 </script>
 
 </body>
