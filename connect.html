@@ -26,43 +26,57 @@
 
         // Подключение кошелька
         connectBtn.addEventListener('click', async () => {
+            console.log("Нажата кнопка Connect");
             try {
                 await provider.enable(); // Запрос на подключение
                 const web3 = new Web3(provider);
                 const accounts = await web3.eth.getAccounts();
                 console.log('Подключенные аккаунты:', accounts);
 
-                // Сохранение состояния в localStorage
-                localStorage.setItem('walletAddress', accounts[0]);
+                if (accounts.length > 0) {
+                    // Сохранение состояния в localStorage
+                    localStorage.setItem('walletAddress', accounts[0]);
+                    alert('Кошелек подключен: ' + accounts[0]);
 
-                // Скрыть кнопку Connect и показать Disconnect
-                connectBtn.style.display = 'none';
-                disconnectBtn.style.display = 'block';
+                    // Скрыть кнопку Connect и показать Disconnect
+                    connectBtn.style.display = 'none';
+                    disconnectBtn.style.display = 'block';
 
-                // Возвращаемся на profile.html после успешного подключения
-                setTimeout(() => {
-                    window.location.href = 'profile.html'; // Вернуться на профиль
-                }, 1000); // Задержка для завершения подключения
+                    // Вернуться на профиль
+                    setTimeout(() => {
+                        console.log("Возврат на профиль после подключения");
+                        window.location.href = 'profile.html';
+                    }, 1000);
+                } else {
+                    alert('Ошибка: Кошелек не подключен');
+                }
             } catch (error) {
                 console.error('Ошибка подключения через WalletConnect:', error);
+                alert('Ошибка подключения через WalletConnect: ' + error.message);
             }
         });
 
         // Отключение кошелька
         disconnectBtn.addEventListener('click', async () => {
+            console.log("Нажата кнопка Disconnect");
             await provider.disconnect();
             localStorage.removeItem('walletAddress');
             connectBtn.style.display = 'block';
             disconnectBtn.style.display = 'none';
-            window.location.href = 'profile.html'; // Вернуться на профиль после отключения
+            alert('Кошелек отключен');
+            console.log("Возврат на профиль после отключения");
+            window.location.href = 'profile.html';
         });
 
         // Проверка сохраненного состояния при загрузке
         window.onload = () => {
             const savedAddress = localStorage.getItem('walletAddress');
             if (savedAddress) {
+                console.log('Кошелек уже подключен:', savedAddress);
                 connectBtn.style.display = 'none';
                 disconnectBtn.style.display = 'block';
+            } else {
+                console.log('Кошелек не подключен');
             }
         };
     </script>
