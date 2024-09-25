@@ -34,8 +34,15 @@
 
                 // Сохранение состояния в localStorage
                 localStorage.setItem('walletAddress', accounts[0]);
+
+                // Скрыть кнопку Connect и показать Disconnect
                 connectBtn.style.display = 'none';
                 disconnectBtn.style.display = 'block';
+
+                // Возвращаемся на profile.html после успешного подключения
+                setTimeout(() => {
+                    window.location.href = 'profile.html'; // Вернуться на профиль
+                }, 1000); // Задержка для завершения подключения
             } catch (error) {
                 console.error('Ошибка подключения через WalletConnect:', error);
             }
@@ -47,6 +54,7 @@
             localStorage.removeItem('walletAddress');
             connectBtn.style.display = 'block';
             disconnectBtn.style.display = 'none';
+            window.location.href = 'profile.html'; // Вернуться на профиль после отключения
         });
 
         // Проверка сохраненного состояния при загрузке
@@ -60,3 +68,4 @@
     </script>
 </body>
 </html>
+
