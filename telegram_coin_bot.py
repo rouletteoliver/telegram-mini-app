@@ -8,7 +8,7 @@ bot = telebot.TeleBot(API_TOKEN)
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     # Загружаем изображение и отправляем его пользователю
-    photo_path = 'telegram-mini-app/heads.png'  # Укажи путь к изображению
+    photo_path = 'start.png'  # Укажи путь к изображению
     caption_text = "Нажмите, чтобы играть в Орёл или Решка!"
     
     # Отправляем изображение (замени на актуальный путь к файлу)
