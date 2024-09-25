@@ -157,31 +157,28 @@
     updateUserData();
 
     connectBtn.addEventListener('click', async () => {
-        if (connectBtn.textContent === 'connect evm') {
-            if (window.ethereum) {
-                try {
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    const account = accounts[0];
-                    walletAddress.textContent = account;
-                    connectBtn.textContent = 'disconnect evm';
-                    connectBtn.classList.add('disconnect-btn');
-                } catch (error) {
-                    console.error('Ошибка при подключении к кошельку:', error);
-                    walletAddress.textContent = 'Ошибка подключения';
-                }
-            } else {
-                alert('Пожалуйста, установите MetaMask или другой EVM-совместимый кошелек!');
+    if (connectBtn.textContent === 'connect evm') {
+        if (window.ethereum && window.ethereum.isMetaMask) {
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const account = accounts[0];
+                walletAddress.textContent = account;
+                connectBtn.textContent = 'disconnect evm';
+                connectBtn.classList.add('disconnect-btn');
+            } catch (error) {
+                console.error('Ошибка при подключении к кошельку:', error);
+                walletAddress.textContent = 'Ошибка подключения';
             }
         } else {
-            walletAddress.textContent = 'Кошелёк не подключён';
-            connectBtn.textContent = 'connect evm';
-            connectBtn.classList.remove('disconnect-btn');
+            alert('Пожалуйста, установите MetaMask или другой EVM-совместимый кошелек!');
         }
-    });
+    } else {
+        walletAddress.textContent = 'Кошелёк не подключён';
+        connectBtn.textContent = 'connect evm';
+        connectBtn.classList.remove('disconnect-btn');
+    }
+});
 
-    document.getElementById('game-button').addEventListener('click', () => {
-        window.location.href = 'game.html';
-    });
 </script>
 
 </body>
