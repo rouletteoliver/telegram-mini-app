@@ -54,12 +54,12 @@
         }
         .profile-details {
             display: flex;
-            gap: 40px; /* Увеличенный отступ между элементами */
+            gap: 40px;
             width: 90%;
         }
         .profile-details div {
             flex: 1;
-            padding: 20px; /* Увеличенный отступ внутри элементов */
+            padding: 20px;
             border: 1px solid #ccc;
             text-align: center;
             background-color: #fff;
@@ -70,19 +70,19 @@
             border-radius: 50%;
             margin-bottom: 10px;
             background-color: #ddd;
-        }
-        .winrate-info {
-            text-align: left;
-            font-size: 14px;
+            display: block;
         }
         .connect-btn {
-            margin-top: 50px; /* Значительно увеличенный отступ сверху */
-            padding: 15px 30px;
+            margin-top: 50px; /* Подвинуть кнопку ниже */
+            padding: 15px 30px; /* Увеличение размера кнопки */
             border: 1px solid #ccc;
             cursor: not-allowed;
             background-color: #e0e0e0;
             font-size: 16px;
-            border-radius: 5px;
+        }
+        .winrate-info {
+            text-align: left;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -102,14 +102,14 @@
     <div class="wallet-info" id="wallet-address">Кошелёк не подключён</div>
     <div class="profile-details">
         <div>
-            <div class="avatar" id="avatar"></div>
+            <img class="avatar" id="avatar" src="" alt="Avatar">
             <div id="nickname">Имя</div>
         </div>
         <div>
             <div class="winrate-info">
                 <strong>Winrate:</strong> —<br>
-                <strong>Побед:</strong> —<br>
-                <strong>Поражений:</strong> —<br>
+                <strong>Wins:</strong> —<br>
+                <strong>Losses:</strong> —<br>
             </div>
         </div>
     </div>
@@ -118,27 +118,32 @@
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-    // Получение данных пользователя Telegram
-    Telegram.WebApp.ready();
-    const user = Telegram.WebApp.initDataUnsafe.user;
-    
-    // Установка имени и аватара
-    if (user) {
-        document.getElementById('nickname').textContent = user.first_name || 'Имя';
-        const avatar = document.getElementById('avatar');
-        if (user.photo_url) {
-            avatar.style.backgroundImage = `url(${user.photo_url})`;
-            avatar.style.backgroundSize = 'cover';
+    const gameButton = document.getElementById('game-button');
+
+    // Подтягиваем данные пользователя из Telegram
+    const tg = window.Telegram.WebApp;
+
+    const nickname = document.getElementById('nickname');
+    const avatar = document.getElementById('avatar');
+
+    // Устанавливаем никнейм и аватар
+    if (tg.initDataUnsafe.user) {
+        nickname.textContent = tg.initDataUnsafe.user.first_name;
+        if (tg.initDataUnsafe.user.photo_url) {
+            avatar.src = tg.initDataUnsafe.user.photo_url;
+        } else {
+            avatar.src = 'path/to/default/avatar.png'; // Путь к стандартному аватару
         }
+    } else {
+        nickname.textContent = 'Имя не найдено';
     }
 
-    // Переход на страницу игры
-    const gameButton = document.getElementById('game-button');
     gameButton.addEventListener('click', () => {
         window.location.href = 'game.html';
     });
+
+    Telegram.WebApp.ready();
 </script>
 
 </body>
 </html>
-
