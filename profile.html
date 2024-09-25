@@ -166,20 +166,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Обработчик для кнопки подключения
+document.addEventListener('DOMContentLoaded', () => {
+    const savedAddress = localStorage.getItem('walletAddress');
+    if (savedAddress) {
+        walletAddress.textContent = savedAddress;
+        connectBtn.textContent = 'disconnect evm';
+        connectBtn.classList.add('disconnect-btn');
+    }
+
+    // Слушатель на изменения учетной записи MetaMask
+    if (window.ethereum) {
+        window.ethereum.on('accountsChanged', function (accounts) {
+            if (accounts.length > 0) {
+                const account = accounts[0];
+                walletAddress.textContent = account;
+                localStorage.setItem('walletAddress', account); // Сохраняем адрес
+                connectBtn.textContent = 'disconnect evm';
+            } else {
+                // Если учетные записи отсутствуют
+                walletAddress.textContent = 'Кошелёк не подключён';
+                connectBtn.textContent = 'connect evm';
+                localStorage.removeItem('walletAddress');
+            }
+        });
+    }
+});
+
 connectBtn.addEventListener('click', async () => {
     if (connectBtn.textContent === 'connect evm') {
         try {
-            // Проверка наличия MetaMask и отправка запроса на подключение
             if (window.ethereum && window.ethereum.isMetaMask) {
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 const account = accounts[0];
                 walletAddress.textContent = account;
-                localStorage.setItem('walletAddress', account); // Сохраняем адрес кошелька
+                localStorage.setItem('walletAddress', account);
                 connectBtn.textContent = 'disconnect evm';
                 connectBtn.classList.add('disconnect-btn');
             } else {
-                // Deeplink для открытия MetaMask на мобильных устройствах
                 window.location.href = 'https://metamask.app.link/dapp/' + window.location.href.replace(/^https?:\/\//, '');
             }
         } catch (error) {
@@ -187,15 +210,12 @@ connectBtn.addEventListener('click', async () => {
             walletAddress.textContent = 'Ошибка подключения к кошельку';
         }
     } else {
-        // Отключаем кошелек и очищаем сохраненные данные
         localStorage.removeItem('walletAddress');
         walletAddress.textContent = 'Кошелёк не подключён';
         connectBtn.textContent = 'connect evm';
         connectBtn.classList.remove('disconnect-btn');
     }
 });
-
-
 
 </script>
 
