@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -52,10 +54,15 @@
             font-size: 24px;
             color: #4CAF50;
         }
+        .wallet-info {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
         .profile-details {
             display: flex;
             gap: 40px;
             width: 90%;
+            margin-bottom: 50px;
         }
         .profile-details div {
             flex: 1;
@@ -65,7 +72,7 @@
             background-color: #fff;
         }
         .avatar {
-            width: 120px; /* Увеличен размер аватара */
+            width: 120px;
             height: 120px;
             border-radius: 50%;
             margin-bottom: 10px;
@@ -74,12 +81,17 @@
             display: block;
         }
         .connect-btn {
-            margin-top: 50px;
             padding: 15px 30px;
             border: 1px solid #ccc;
-            cursor: not-allowed;
-            background-color: #e0e0e0;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
             font-size: 16px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .disconnect-btn {
+            background-color: #f44336;
         }
         .winrate-info {
             text-align: left;
@@ -103,7 +115,7 @@
     <div class="wallet-info" id="wallet-address">Кошелёк не подключён</div>
     <div class="profile-details">
         <div>
-            <img class="avatar" id="avatar" src="" alt="Avatar">
+            <img class="avatar" id="avatar" src="avatar.png" alt="Avatar">
             <div id="nickname">Имя</div>
         </div>
         <div>
@@ -114,44 +126,62 @@
             </div>
         </div>
     </div>
-    <button class="connect-btn">connect evm</button>
+    <button id="connect-evm" class="connect-btn">connect evm</button>
 </div>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-    const gameButton = document.getElementById('game-button');
-
-    // Подтягиваем данные пользователя из Telegram
     const tg = window.Telegram.WebApp;
-
     const nickname = document.getElementById('nickname');
     const avatar = document.getElementById('avatar');
+    const walletAddress = document.getElementById('wallet-address');
+    const connectBtn = document.getElementById('connect-evm');
 
     function updateUserData() {
-        // Проверяем, инициализирован ли объект tg и есть ли данные пользователя
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             nickname.textContent = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || 'Имя не найдено';
             if (tg.initDataUnsafe.user.photo_url) {
                 avatar.src = tg.initDataUnsafe.user.photo_url;
                 avatar.onerror = () => {
-                    avatar.src = 'avatar.png'; // Стандартный аватар при ошибке загрузки
+                    avatar.src = 'avatar.png';
                 };
             } else {
-                avatar.src = 'avatar.png'; // Если фото отсутствует, используем стандартный
+                avatar.src = 'avatar.png';
             }
         } else {
             nickname.textContent = 'Имя не найдено';
-            avatar.src = 'avatar.png'; // Если данные отсутствуют, используем стандартный аватар
+            avatar.src = 'avatar.png';
         }
     }
 
+    tg.ready();
     updateUserData();
 
-    gameButton.addEventListener('click', () => {
-        window.location.href = 'game.html';
+    connectBtn.addEventListener('click', async () => {
+        if (connectBtn.textContent === 'connect evm') {
+            if (window.ethereum) {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const account = accounts[0];
+                    walletAddress.textContent = account;
+                    connectBtn.textContent = 'disconnect evm';
+                    connectBtn.classList.add('disconnect-btn');
+                } catch (error) {
+                    console.error('Ошибка при подключении к кошельку:', error);
+                    walletAddress.textContent = 'Ошибка подключения';
+                }
+            } else {
+                alert('Пожалуйста, установите MetaMask или другой EVM-совместимый кошелек!');
+            }
+        } else {
+            walletAddress.textContent = 'Кошелёк не подключён';
+            connectBtn.textContent = 'connect evm';
+            connectBtn.classList.remove('disconnect-btn');
+        }
     });
 
-    Telegram.WebApp.ready();
+    document.getElementById('game-button').addEventListener('click', () => {
+        window.location.href = 'game.html';
+    });
 </script>
 
 </body>
