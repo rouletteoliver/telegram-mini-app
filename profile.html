@@ -65,12 +65,12 @@
             background-color: #fff;
         }
         .avatar {
-            width: 100px; /* Увеличен размер аватара */
-            height: 100px;
+            width: 120px; /* Увеличен размер аватара */
+            height: 120px;
             border-radius: 50%;
             margin-bottom: 10px;
             background-color: #ddd;
-            object-fit: cover; /* Исправлено отображение аватара */
+            object-fit: cover;
             display: block;
         }
         .connect-btn {
@@ -127,17 +127,25 @@
     const nickname = document.getElementById('nickname');
     const avatar = document.getElementById('avatar');
 
-    // Проверяем, инициализирован ли объект tg и есть ли данные пользователя
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        nickname.textContent = tg.initDataUnsafe.user.first_name || 'Имя не найдено';
-        if (tg.initDataUnsafe.user.photo_url) {
-            avatar.src = tg.initDataUnsafe.user.photo_url;
+    function updateUserData() {
+        // Проверяем, инициализирован ли объект tg и есть ли данные пользователя
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            nickname.textContent = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || 'Имя не найдено';
+            if (tg.initDataUnsafe.user.photo_url) {
+                avatar.src = tg.initDataUnsafe.user.photo_url;
+                avatar.onerror = () => {
+                    avatar.src = 'path/to/default/avatar.png'; // Стандартный аватар при ошибке загрузки
+                };
+            } else {
+                avatar.src = 'path/to/default/avatar.png'; // Если фото отсутствует, используем стандартный
+            }
         } else {
-            avatar.src = 'path/to/default/avatar.png'; // Путь к стандартному аватару
+            nickname.textContent = 'Имя не найдено';
+            avatar.src = 'path/to/default/avatar.png'; // Если данные отсутствуют, используем стандартный аватар
         }
-    } else {
-        nickname.textContent = 'Имя не найдено';
     }
+
+    updateUserData();
 
     gameButton.addEventListener('click', () => {
         window.location.href = 'game.html';
