@@ -10,7 +10,7 @@
             margin: 0;
             padding: 0;
             width: 100%;
-            height: 100%;
+            height: 100vh;
             overflow: hidden;
             font-family: 'Roboto', sans-serif;
             display: flex;
@@ -155,9 +155,11 @@
     const tailsButton = document.getElementById('tails');
     let balance = parseInt(localStorage.getItem('balance')) || 100;
 
+    // Обновление интерфейса на основе баланса
     function updateUI() {
         balanceElement.textContent = `Баланс: ${balance}`;
-        if (balance <= 0) {
+        const bet = parseInt(slider.value);
+        if (balance <= 0 || bet > balance) {
             headsButton.classList.add('disabled');
             tailsButton.classList.add('disabled');
         } else {
@@ -168,6 +170,7 @@
 
     slider.addEventListener('input', function() {
         betDisplay.textContent = `Ставка: ${slider.value} монет`;
+        updateUI();
     });
 
     headsButton.addEventListener('click', function() {
@@ -220,7 +223,7 @@
     });
 
     Telegram.WebApp.ready();
-    updateUI();
+    updateUI(); // Обновление интерфейса при запуске
 </script>
 
 </body>
