@@ -156,100 +156,32 @@
     tg.ready();
     updateUserData();
 
-    // Проверяем сохраненное состояние подключения при загрузке страницы
-document.addEventListener('DOMContentLoaded', () => {
-    const savedAddress = localStorage.getItem('walletAddress');
-    if (savedAddress) {
-        walletAddress.textContent = savedAddress;
-        connectBtn.textContent = 'disconnect evm';
-        connectBtn.classList.add('disconnect-btn');
-    }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const savedAddress = localStorage.getItem('walletAddress');
-    if (savedAddress) {
-        walletAddress.textContent = savedAddress;
-        connectBtn.textContent = 'disconnect evm';
-        connectBtn.classList.add('disconnect-btn');
-    }
-
-    // Слушатель на изменения учетной записи MetaMask
-    if (window.ethereum) {
-        window.ethereum.on('accountsChanged', function (accounts) {
-            if (accounts.length > 0) {
-                const account = accounts[0];
-                walletAddress.textContent = account;
-                localStorage.setItem('walletAddress', account); // Сохраняем адрес
-                connectBtn.textContent = 'disconnect evm';
+    connectBtn.addEventListener('click', async () => {
+        if (connectBtn.textContent === 'connect evm') {
+            if (window.ethereum) {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const account = accounts[0];
+                    walletAddress.textContent = account;
+                    connectBtn.textContent = 'disconnect evm';
+                    connectBtn.classList.add('disconnect-btn');
+                } catch (error) {
+                    console.error('Ошибка при подключении к кошельку:', error);
+                    walletAddress.textContent = 'Ошибка подключения';
+                }
             } else {
-                // Если учетные записи отсутствуют
-                walletAddress.textContent = 'Кошелёк не подключён';
-                connectBtn.textContent = 'connect evm';
-                localStorage.removeItem('walletAddress');
+                alert('Пожалуйста, установите MetaMask или другой EVM-совместимый кошелек!');
             }
-        });
-    }
-});
-
-document.addEventListener('visibilitychange', () => {
-    // Проверка при возвращении в приложение
-    if (document.visibilityState === 'visible') {
-        updateWalletStatus();
-    }
-});
-
-async function updateWalletStatus() {
-    if (window.ethereum && window.ethereum.isConnected()) {
-        try {
-            const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-            if (accounts.length > 0) {
-                const account = accounts[0];
-                walletAddress.textContent = account;
-                localStorage.setItem('walletAddress', account);
-                connectBtn.textContent = 'disconnect evm';
-            } else {
-                walletAddress.textContent = 'Кошелёк не подключён';
-                connectBtn.textContent = 'connect evm';
-            }
-        } catch (error) {
-            console.error('Ошибка проверки состояния кошелька:', error);
-            walletAddress.textContent = 'Ошибка подключения к кошельку';
+        } else {
+            walletAddress.textContent = 'Кошелёк не подключён';
+            connectBtn.textContent = 'connect evm';
+            connectBtn.classList.remove('disconnect-btn');
         }
-    } else {
-        walletAddress.textContent = 'Кошелёк не подключён';
-        connectBtn.textContent = 'connect evm';
-    }
-}
+    });
 
-connectBtn.addEventListener('click', async () => {
-    if (connectBtn.textContent === 'connect evm') {
-        try {
-            if (window.ethereum && window.ethereum.isMetaMask) {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                const account = accounts[0];
-                walletAddress.textContent = account;
-                localStorage.setItem('walletAddress', account);
-                connectBtn.textContent = 'disconnect evm';
-            } else {
-                window.location.href = 'https://metamask.app.link/dapp/' + window.location.href.replace(/^https?:\/\//, '');
-            }
-        } catch (error) {
-            console.error('Ошибка при подключении к кошельку:', error);
-            walletAddress.textContent = 'Ошибка подключения к кошельку';
-        }
-    } else {
-        localStorage.removeItem('walletAddress');
-        walletAddress.textContent = 'Кошелёк не подключён';
-        connectBtn.textContent = 'connect evm';
-        connectBtn.classList.remove('disconnect-btn');
-    }
-});
-
-// Проверка состояния при загрузке
-updateWalletStatus();
-
-
+    document.getElementById('game-button').addEventListener('click', () => {
+        window.location.href = 'game.html';
+    });
 </script>
 
 </body>
