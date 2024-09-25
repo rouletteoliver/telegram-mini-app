@@ -13,7 +13,7 @@ def send_welcome(message):
     
     # Путь к изображению
     photo_path = 'start.png'
-    caption_text = "Нажмите, чтобы начать лудить!"
+    caption_text = "Приветствую тебя во FlipS! Здесь ты можешь флипнуть Hitcoin против другого игрока."
     
     # Попробуем отправить изображение
     try:
