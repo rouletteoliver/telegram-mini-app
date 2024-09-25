@@ -71,24 +71,15 @@
             height: 80px;
             border-radius: 50%;
             border: 2px solid #000;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
             background-size: cover;
             background-position: center;
+            cursor: pointer;
         }
         #heads {
             background-image: url('heads.png'); /* Восстановление изображения кнопки */
         }
         #tails {
             background-image: url('tails.png'); /* Восстановление изображения кнопки */
-        }
-        .coin:active {
-            transform: scale(0.85);
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-        .coin.disabled {
-            cursor: not-allowed;
-            opacity: 0.5;
         }
         .slider-container {
             display: flex;
@@ -142,8 +133,8 @@
 <div class="result" id="result">результат</div>
 
 <div class="coin-container">
-    <div class="coin green" id="heads"></div>
-    <div class="coin red" id="tails"></div>
+    <div class="coin" id="heads"></div>
+    <div class="coin" id="tails"></div>
 </div>
 
 <div class="slider-container">
@@ -182,14 +173,12 @@
 
     headsButton.addEventListener('click', function() {
         if (!headsButton.classList.contains('disabled')) {
-            navigator.vibrate(50); // Вибрация на 50 мс
             playGame('Орёл');
         }
     });
 
     tailsButton.addEventListener('click', function() {
         if (!tailsButton.classList.contains('disabled')) {
-            navigator.vibrate(50); // Вибрация на 50 мс
             playGame('Решка');
         }
     });
@@ -235,4 +224,3 @@
 
 </body>
 </html>
-
