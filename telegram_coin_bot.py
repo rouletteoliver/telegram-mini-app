@@ -13,7 +13,7 @@ def send_welcome(message):
     
     # Путь к изображению
     photo_path = 'start.png'
-    caption_text = "Нажмите, чтобы играть в Орёл или Решка!"
+    caption_text = "Нажмите, чтобы начать лудить!"
     
     # Попробуем отправить изображение
     try:
@@ -25,7 +25,7 @@ def send_welcome(message):
     # Создание кнопки для Mini App
     markup = InlineKeyboardMarkup()
     web_app_info = WebAppInfo(url="https://rouletteoliver.github.io/telegram-mini-app/")
-    web_app_button = InlineKeyboardButton("Играть", web_app=web_app_info)
+    web_app_button = InlineKeyboardButton("Лудить", web_app=web_app_info)
     markup.add(web_app_button)
     
     # Попытка отправить сообщение с кнопкой
