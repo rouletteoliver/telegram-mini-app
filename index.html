@@ -80,10 +80,15 @@
             border-radius: 50%;
             border: 2px solid #000;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
         .coin:active {
-            transform: scale(0.9);
+            transform: scale(0.85);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .coin.disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
         }
         .coin.green {
             background-image: url('heads.png');
@@ -162,18 +167,38 @@
     const betDisplay = document.getElementById('bet-display');
     const slider = document.getElementById('bet-slider');
     const refreshButton = document.getElementById('refresh');
-    let balance = 100;
+    const headsButton = document.getElementById('heads');
+    const tailsButton = document.getElementById('tails');
+    let balance = parseInt(localStorage.getItem('balance')) || 100;
+
+    // Обновление интерфейса на основе баланса
+    function updateUI() {
+        balanceElement.textContent = `Баланс: ${balance}`;
+        if (balance <= 0) {
+            headsButton.classList.add('disabled');
+            tailsButton.classList.add('disabled');
+        } else {
+            headsButton.classList.remove('disabled');
+            tailsButton.classList.remove('disabled');
+        }
+    }
 
     slider.addEventListener('input', function() {
         betDisplay.textContent = `Ставка: ${slider.value} монет`;
     });
 
-    document.getElementById('heads').addEventListener('click', function() {
-        playGame('Орёл');
+    headsButton.addEventListener('click', function() {
+        if (!headsButton.classList.contains('disabled')) {
+            navigator.vibrate(50); // Вибрация на 50 мс
+            playGame('Орёл');
+        }
     });
 
-    document.getElementById('tails').addEventListener('click', function() {
-        playGame('Решка');
+    tailsButton.addEventListener('click', function() {
+        if (!tailsButton.classList.contains('disabled')) {
+            navigator.vibrate(50); // Вибрация на 50 мс
+            playGame('Решка');
+        }
     });
 
     function playGame(choice) {
@@ -194,7 +219,8 @@
             winLossElement.textContent = 'Поражение!';
         }
 
-        balanceElement.textContent = `Баланс: ${balance}`;
+        localStorage.setItem('balance', balance);
+        updateUI();
 
         if (balance <= 0) {
             winLossElement.textContent = 'Баланс нулевой';
@@ -204,12 +230,14 @@
     refreshButton.addEventListener('click', function() {
         if (balance <= 0) {
             balance = 100;
-            balanceElement.textContent = `Баланс: ${balance}`;
+            localStorage.setItem('balance', balance);
             winLossElement.textContent = 'Баланс обновлён';
+            updateUI();
         }
     });
 
     Telegram.WebApp.ready();
+    updateUI(); // Обновление интерфейса при запуске
 </script>
 
 </body>
