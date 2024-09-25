@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connect Wallet</title>
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <title>Connect Wallet with Ethers.js</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
 </head>
 <body>
     <h2>Подключение кошелька</h2>
@@ -15,71 +14,62 @@
     <script>
         const connectBtn = document.getElementById('connect-wallet');
         const disconnectBtn = document.getElementById('disconnect-wallet');
+        let provider, signer;
 
-        // Инициализация провайдера WalletConnect
-        const provider = new WalletConnectProvider({
-            rpc: {
-                1: "https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID" // Замените на ваш Infura ID
-            },
-            chainId: 1,
-        });
-
-        // Подключение кошелька
-        connectBtn.addEventListener('click', async () => {
-            console.log("Нажата кнопка Connect");
+        // Функция для подключения кошелька
+        async function connectWallet() {
             try {
-                await provider.enable(); // Запрос на подключение
-                const web3 = new Web3(provider);
-                const accounts = await web3.eth.getAccounts();
-                console.log('Подключенные аккаунты:', accounts);
-
-                if (accounts.length > 0) {
-                    // Сохранение состояния в localStorage
-                    localStorage.setItem('walletAddress', accounts[0]);
-                    alert('Кошелек подключен: ' + accounts[0]);
-
-                    // Скрыть кнопку Connect и показать Disconnect
-                    connectBtn.style.display = 'none';
-                    disconnectBtn.style.display = 'block';
-
-                    // Вернуться на профиль
-                    setTimeout(() => {
-                        console.log("Возврат на профиль после подключения");
-                        window.location.href = 'profile.html';
-                    }, 1000);
-                } else {
-                    alert('Ошибка: Кошелек не подключен');
+                // Проверка наличия MetaMask и запрос на подключение
+                if (!window.ethereum) {
+                    alert('MetaMask не установлен. Пожалуйста, установите MetaMask для продолжения.');
+                    return;
                 }
-            } catch (error) {
-                console.error('Ошибка подключения через WalletConnect:', error);
-                alert('Ошибка подключения через WalletConnect: ' + error.message);
-            }
-        });
 
-        // Отключение кошелька
-        disconnectBtn.addEventListener('click', async () => {
-            console.log("Нажата кнопка Disconnect");
-            await provider.disconnect();
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                await provider.send("eth_requestAccounts", []); // Запрос аккаунтов
+                signer = provider.getSigner();
+                const account = await signer.getAddress();
+                console.log('Подключен аккаунт:', account);
+
+                // Сохранение состояния в localStorage
+                localStorage.setItem('walletAddress', account);
+                alert('Кошелек подключен: ' + account);
+
+                connectBtn.style.display = 'none';
+                disconnectBtn.style.display = 'block';
+
+                // Возвращение на профиль
+                setTimeout(() => {
+                    window.location.href = 'profile.html';
+                }, 1000);
+            } catch (error) {
+                console.error('Ошибка подключения через ethers.js:', error);
+                alert('Ошибка подключения к кошельку: ' + error.message);
+            }
+        }
+
+        // Функция для отключения кошелька
+        function disconnectWallet() {
             localStorage.removeItem('walletAddress');
             connectBtn.style.display = 'block';
             disconnectBtn.style.display = 'none';
             alert('Кошелек отключен');
-            console.log("Возврат на профиль после отключения");
             window.location.href = 'profile.html';
-        });
+        }
 
-        // Проверка сохраненного состояния при загрузке
+        // Обработчики событий для кнопок
+        connectBtn.addEventListener('click', connectWallet);
+        disconnectBtn.addEventListener('click', disconnectWallet);
+
+        // Проверка состояния при загрузке страницы
         window.onload = () => {
             const savedAddress = localStorage.getItem('walletAddress');
             if (savedAddress) {
                 console.log('Кошелек уже подключен:', savedAddress);
                 connectBtn.style.display = 'none';
                 disconnectBtn.style.display = 'block';
-            } else {
-                console.log('Кошелек не подключен');
             }
         };
     </script>
 </body>
 </html>
-
