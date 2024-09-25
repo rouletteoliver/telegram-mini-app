@@ -31,15 +31,31 @@
             font-size: 16px;
             cursor: not-allowed;
         }
+        .balance-container {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .refresh-button {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-right: 10px;
+        }
         .balance {
             font-size: 20px;
-            margin: 20px 0;
         }
         .win-loss {
             border: 2px solid #000;
             padding: 10px;
             margin: 10px 0;
-            width: 100px;
+            width: 150px;
             text-align: center;
         }
         .result {
@@ -70,11 +86,11 @@
             transform: scale(0.9);
         }
         .coin.green {
-            background-image: url('heads.png'); /* Путь к изображению орла */
+            background-image: url('heads.png');
             background-size: cover;
         }
         .coin.red {
-            background-image: url('tails.png'); /* Путь к изображению решки */
+            background-image: url('tails.png');
             background-size: cover;
         }
         .slider-container {
@@ -86,14 +102,14 @@
         }
         .slider {
             width: 84%;
-            height: 24px; /* Увеличение высоты ползунка */
+            height: 24px;
             -webkit-appearance: none;
             background: #ddd;
             border-radius: 10px;
             outline: none;
             transition: background 0.3s;
             cursor: pointer;
-            padding: 10px; /* Расширение активной зоны */
+            padding: 10px;
         }
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -121,7 +137,10 @@
     <button>profile</button>
 </div>
 
-<div class="balance">Баланс: 100</div>
+<div class="balance-container">
+    <div class="refresh-button" id="refresh">🔄</div>
+    <div class="balance" id="balance">Баланс: 100</div>
+</div>
 <div class="win-loss" id="win-loss">win/loss</div>
 <div class="result" id="result">результат</div>
 
@@ -137,34 +156,35 @@
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-    // Инициализация
-    const balanceElement = document.querySelector('.balance');
+    const balanceElement = document.getElementById('balance');
     const winLossElement = document.getElementById('win-loss');
     const resultElement = document.getElementById('result');
     const betDisplay = document.getElementById('bet-display');
     const slider = document.getElementById('bet-slider');
+    const refreshButton = document.getElementById('refresh');
     let balance = 100;
 
-    // Обновление отображения ставки при движении ползунка
     slider.addEventListener('input', function() {
         betDisplay.textContent = `Ставка: ${slider.value} монет`;
     });
 
-    // Обработка нажатия на кнопку "Орёл"
     document.getElementById('heads').addEventListener('click', function() {
         playGame('Орёл');
     });
 
-    // Обработка нажатия на кнопку "Решка"
     document.getElementById('tails').addEventListener('click', function() {
         playGame('Решка');
     });
 
-    // Функция игры
     function playGame(choice) {
         const bet = parseInt(slider.value);
         const outcome = Math.random() < 0.5 ? 'Орёл' : 'Решка';
         resultElement.textContent = `Выпало: ${outcome}`;
+
+        if (bet > balance) {
+            winLossElement.textContent = 'Недостаточно средств для ставки';
+            return;
+        }
 
         if (choice === outcome) {
             balance += bet;
@@ -174,20 +194,23 @@
             winLossElement.textContent = 'Поражение!';
         }
 
-        // Обновляем баланс
         balanceElement.textContent = `Баланс: ${balance}`;
 
-        // Проверка на нулевой баланс
         if (balance <= 0) {
-            alert('У вас закончились деньги! Игра окончена.');
-            balance = 100; // Сброс баланса
-            balanceElement.textContent = `Баланс: ${balance}`;
+            winLossElement.textContent = 'Баланс нулевой';
         }
     }
+
+    refreshButton.addEventListener('click', function() {
+        if (balance <= 0) {
+            balance = 100;
+            balanceElement.textContent = `Баланс: ${balance}`;
+            winLossElement.textContent = 'Баланс обновлён';
+        }
+    });
 
     Telegram.WebApp.ready();
 </script>
 
 </body>
 </html>
-
