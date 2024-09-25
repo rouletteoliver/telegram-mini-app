@@ -192,6 +192,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+document.addEventListener('visibilitychange', () => {
+    // Проверка при возвращении в приложение
+    if (document.visibilityState === 'visible') {
+        updateWalletStatus();
+    }
+});
+
+async function updateWalletStatus() {
+    if (window.ethereum && window.ethereum.isConnected()) {
+        try {
+            const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+            if (accounts.length > 0) {
+                const account = accounts[0];
+                walletAddress.textContent = account;
+                localStorage.setItem('walletAddress', account);
+                connectBtn.textContent = 'disconnect evm';
+            } else {
+                walletAddress.textContent = 'Кошелёк не подключён';
+                connectBtn.textContent = 'connect evm';
+            }
+        } catch (error) {
+            console.error('Ошибка проверки состояния кошелька:', error);
+            walletAddress.textContent = 'Ошибка подключения к кошельку';
+        }
+    } else {
+        walletAddress.textContent = 'Кошелёк не подключён';
+        connectBtn.textContent = 'connect evm';
+    }
+}
+
 connectBtn.addEventListener('click', async () => {
     if (connectBtn.textContent === 'connect evm') {
         try {
@@ -201,7 +231,6 @@ connectBtn.addEventListener('click', async () => {
                 walletAddress.textContent = account;
                 localStorage.setItem('walletAddress', account);
                 connectBtn.textContent = 'disconnect evm';
-                connectBtn.classList.add('disconnect-btn');
             } else {
                 window.location.href = 'https://metamask.app.link/dapp/' + window.location.href.replace(/^https?:\/\//, '');
             }
@@ -216,6 +245,10 @@ connectBtn.addEventListener('click', async () => {
         connectBtn.classList.remove('disconnect-btn');
     }
 });
+
+// Проверка состояния при загрузке
+updateWalletStatus();
+
 
 </script>
 
