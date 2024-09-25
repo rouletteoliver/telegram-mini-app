@@ -126,7 +126,7 @@
     // Функция для обновления данных пользователя
     function updateUserData() {
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            nickname.textContent = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || 'Имя не найдено';
+            nickname.textContent = tg.initDataUnsafe.user.first_name || 'Имя не найдено';
             if (tg.initDataUnsafe.user.photo_url) {
                 avatar.src = tg.initDataUnsafe.user.photo_url;
                 avatar.onerror = () => {
@@ -153,4 +153,3 @@
 
 </body>
 </html>
-
