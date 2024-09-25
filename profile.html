@@ -16,6 +16,22 @@
             font-family: Arial, sans-serif;
             text-align: center;
         }
+        #navbar {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            background-color: #e0e0e0;
+            padding: 10px;
+            position: fixed;
+            top: 0;
+        }
+        .nav-button {
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border: none;
+            background: none;
+        }
         #avatar {
             width: 80px;
             height: 80px;
@@ -25,27 +41,43 @@
         #balance {
             font-size: 20px;
             color: green;
+            margin-top: 50px;
         }
         #connect-evm {
             margin-top: 20px;
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .info-box {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 200px;
         }
     </style>
 </head>
 <body>
 
+    <div id="navbar">
+        <button class="nav-button" onclick="window.location.href='search.html'">search game</button>
+        <button class="nav-button" onclick="window.location.href='game.html'">game</button>
+        <button class="nav-button" onclick="window.location.href='profile.html'" style="color: blue;">profile</button>
+    </div>
+
     <h1>Баланс:</h1>
     <p id="balance">0 Hitcoin</p>
     <p>Кошелёк не подключён</p>
 
-    <div>
+    <div class="info-box">
         <img id="avatar" src="default-avatar.png" alt="Avatar">
         <p id="username">Имя пользователя</p>
     </div>
 
-    <div>
+    <div class="info-box">
         <p>Winrate: —</p>
         <p>Wins: —</p>
         <p>Losses: —</p>
