@@ -1,116 +1,187 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #f4f4f9;
+            background-color: #f4f4f4;
         }
-
-        .balance {
-            font-size: 20px;
+        .header {
+            display: flex;
+            width: 100%;
+            justify-content: space-around;
+            padding: 10px 0;
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #ddd;
+        }
+        .header button {
+            padding: 10px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+        }
+        .header button.active {
+            color: blue;
+        }
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .balance-container {
+            text-align: center;
             margin-bottom: 20px;
         }
-
-        .address {
+        .balance-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .balance-value {
+            font-size: 24px;
+            color: #4CAF50;
+        }
+        .wallet-info {
             font-weight: bold;
             margin-bottom: 20px;
         }
-
-        .user-info {
+        .profile-details {
             display: flex;
-            justify-content: space-between;
-            width: 80%;
-            margin-bottom: 30px;
+            gap: 40px;
+            width: 90%;
+            margin-bottom: 50px;
         }
-
-        .button {
-            padding: 10px 20px;
-            font-size: 16px;
+        .profile-details div {
+            flex: 1;
+            padding: 20px;
+            border: 1px solid #ccc;
+            text-align: center;
+            background-color: #fff;
+        }
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            background-color: #ddd;
+            object-fit: cover;
+            display: block;
+        }
+        .connect-btn {
+            padding: 15px 30px;
+            border: 1px solid #ccc;
             cursor: pointer;
             background-color: #4CAF50;
             color: white;
-            border: none;
+            font-size: 16px;
             border-radius: 5px;
+            margin-top: 20px;
         }
-
-        .button.disconnect {
+        .disconnect-btn {
             background-color: #f44336;
+        }
+        .winrate-info {
+            text-align: left;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-<h2>Баланс:</h2>
-<p class="balance" id="balance">0 Hitcoin</p>
-<p class="address" id="walletAddress">Кошелёк не подключён</p>
-
-<div class="user-info">
-    <div>
-        <img src="default_avatar.png" id="avatar" alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%;">
-        <p id="username">Имя</p>
-    </div>
-    <div>
-        <p>Winrate: —</p>
-        <p>Wins: —</p>
-        <p>Losses: —</p>
-    </div>
+<div class="header">
+    <button id="search-button" class="inactive">search game</button>
+    <button id="game-button" class="inactive">game</button>
+    <button id="profile-button" class="active">profile</button>
 </div>
 
-<button class="button" id="connectButton" onclick="connectWallet()">connect evm</button>
+<div class="profile-container">
+    <div class="balance-container">
+        <div class="balance-title">Баланс:</div>
+        <div class="balance-value" id="wallet-balance">0 Hitcoin</div>
+    </div>
+    <div class="wallet-info" id="wallet-address">Кошелёк не подключён</div>
+    <div class="profile-details">
+        <div>
+            <img class="avatar" id="avatar" src="avatar.png" alt="Avatar">
+            <div id="nickname">Имя</div>
+        </div>
+        <div>
+            <div class="winrate-info">
+                <strong>Winrate:</strong> —<br>
+                <strong>Wins:</strong> —<br>
+                <strong>Losses:</strong> —<br>
+            </div>
+        </div>
+    </div>
+    <button id="connect-evm" class="connect-btn">connect evm</button>
+</div>
 
 <script>
-    let provider;
-    let signer;
+    const tg = window.Telegram.WebApp;
+    const nickname = document.getElementById('nickname');
+    const avatar = document.getElementById('avatar');
+    const walletAddress = document.getElementById('wallet-address');
+    const connectBtn = document.getElementById('connect-evm');
 
-    async function connectWallet() {
-        try {
-            if (!window.ethereum) {
-                alert('MetaMask не установлен. Установите его для продолжения.');
-                return;
+    function updateUserData() {
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            nickname.textContent = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || 'Имя не найдено';
+            if (tg.initDataUnsafe.user.photo_url) {
+                avatar.src = tg.initDataUnsafe.user.photo_url;
+                avatar.onerror = () => {
+                    avatar.src = 'avatar.png';
+                };
+            } else {
+                avatar.src = 'avatar.png';
             }
-            provider = new ethers.providers.Web3Provider(window.ethereum);
-            await provider.send("eth_requestAccounts", []);
-            signer = provider.getSigner();
-            const address = await signer.getAddress();
-            document.getElementById('walletAddress').textContent = address;
-            document.getElementById('connectButton').textContent = 'disconnect evm';
-            document.getElementById('connectButton').classList.add('disconnect');
-            document.getElementById('connectButton').onclick = disconnectWallet;
-            updateBalance();
-        } catch (error) {
-            alert('Ошибка подключения к кошельку. Проверьте настройки MetaMask и разрешения.');
-            console.error(error);
+        } else {
+            nickname.textContent = 'Имя не найдено';
+            avatar.src = 'avatar.png';
         }
     }
 
-    function disconnectWallet() {
-        document.getElementById('walletAddress').textContent = 'Кошелёк не подключён';
-        document.getElementById('connectButton').textContent = 'connect evm';
-        document.getElementById('connectButton').classList.remove('disconnect');
-        document.getElementById('connectButton').onclick = connectWallet;
-    }
+    tg.ready();
+    updateUserData();
 
-    async function updateBalance() {
-        try {
-            const contractAddress = "0xc95e481e86D71d7892dBB7d1f4E98455e4e52Ca7";
-            const abi = ["function balanceOf(address owner) view returns (uint256)"];
-            const contract = new ethers.Contract(contractAddress, abi, provider);
-            const balance = await contract.balanceOf(await signer.getAddress());
-            document.getElementById('balance').textContent = `${ethers.utils.formatUnits(balance, 18)} Hitcoin`;
-        } catch (error) {
-            console.error('Ошибка получения баланса:', error);
+    connectBtn.addEventListener('click', async () => {
+        if (connectBtn.textContent === 'connect evm') {
+            if (window.ethereum) {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const account = accounts[0];
+                    walletAddress.textContent = account;
+                    connectBtn.textContent = 'disconnect evm';
+                    connectBtn.classList.add('disconnect-btn');
+                } catch (error) {
+                    console.error('Ошибка при подключении к кошельку:', error);
+                    walletAddress.textContent = 'Ошибка подключения';
+                }
+            } else {
+                alert('Пожалуйста, установите MetaMask или другой EVM-совместимый кошелек!');
+            }
+        } else {
+            walletAddress.textContent = 'Кошелёк не подключён';
+            connectBtn.textContent = 'connect evm';
+            connectBtn.classList.remove('disconnect-btn');
         }
-    }
+    });
+
+    document.getElementById('game-button').addEventListener('click', () => {
+        window.location.href = 'game.html';
+    });
 </script>
 
 </body>
