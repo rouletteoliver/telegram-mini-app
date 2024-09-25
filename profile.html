@@ -130,14 +130,14 @@
             if (tg.initDataUnsafe.user.photo_url) {
                 avatar.src = tg.initDataUnsafe.user.photo_url;
                 avatar.onerror = () => {
-                    avatar.src = 'path/to/default/avatar.png'; // Устанавливаем стандартный аватар при ошибке
+                    avatar.src = 'avatar.png'; // Устанавливаем стандартный аватар при ошибке
                 };
             } else {
-                avatar.src = 'path/to/default/avatar.png'; // Устанавливаем стандартный аватар если фото нет
+                avatar.src = 'avatar.png'; // Устанавливаем стандартный аватар если фото нет
             }
         } else {
             nickname.textContent = 'Имя не найдено';
-            avatar.src = 'path/to/default/avatar.png'; // Если данные пользователя не найдены, используем стандартное изображение
+            avatar.src = 'avatar.png'; // Если данные пользователя не найдены, используем стандартное изображение
         }
     }
 
