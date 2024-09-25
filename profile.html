@@ -136,7 +136,7 @@
     const walletAddress = document.getElementById('wallet-address');
     const connectBtn = document.getElementById('connect-evm');
     const contractAddress = "0xc95e481e86D71d7892dBB7d1f4E98455e4e52Ca7";
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    let provider;
     const abi = ["function balanceOf(address account) view returns (uint256)"];
 
     function updateUserData() {
@@ -156,6 +156,14 @@
         }
     }
 
+    async function initializeProvider() {
+        try {
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+        } catch (error) {
+            console.error('Ошибка инициализации провайдера:', error);
+        }
+    }
+
     async function getTokenBalance(account) {
         try {
             const contract = new ethers.Contract(contractAddress, abi, provider);
@@ -163,11 +171,13 @@
             document.getElementById('wallet-balance').textContent = `${ethers.utils.formatUnits(balance, 18)} Hitcoin`;
         } catch (error) {
             console.error('Ошибка получения баланса:', error);
+            document.getElementById('wallet-balance').textContent = 'Ошибка получения баланса';
         }
     }
 
     tg.ready();
     updateUserData();
+    initializeProvider();
 
     connectBtn.addEventListener('click', async () => {
         if (connectBtn.textContent === 'connect evm') {
