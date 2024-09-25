@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect Wallet</title>
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+</head>
+<body>
+    <h2>Подключение кошелька</h2>
+    <button id="connect-wallet">Connect Wallet</button>
+    <button id="disconnect-wallet" style="display: none;">Disconnect Wallet</button>
+
+    <script>
+        const connectBtn = document.getElementById('connect-wallet');
+        const disconnectBtn = document.getElementById('disconnect-wallet');
+
+        // Инициализация провайдера WalletConnect
+        const provider = new WalletConnectProvider({
+            rpc: {
+                1: "https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID" // Замените на ваш Infura ID
+            },
+            chainId: 1,
+        });
+
+        // Подключение кошелька
+        connectBtn.addEventListener('click', async () => {
+            try {
+                await provider.enable(); // Запрос на подключение
+                const web3 = new Web3(provider);
+                const accounts = await web3.eth.getAccounts();
+                console.log('Подключенные аккаунты:', accounts);
+
+                // Сохранение состояния в localStorage
+                localStorage.setItem('walletAddress', accounts[0]);
+                connectBtn.style.display = 'none';
+                disconnectBtn.style.display = 'block';
+            } catch (error) {
+                console.error('Ошибка подключения через WalletConnect:', error);
+            }
+        });
+
+        // Отключение кошелька
+        disconnectBtn.addEventListener('click', async () => {
+            await provider.disconnect();
+            localStorage.removeItem('walletAddress');
+            connectBtn.style.display = 'block';
+            disconnectBtn.style.display = 'none';
+        });
+
+        // Проверка сохраненного состояния при загрузке
+        window.onload = () => {
+            const savedAddress = localStorage.getItem('walletAddress');
+            if (savedAddress) {
+                connectBtn.style.display = 'none';
+                disconnectBtn.style.display = 'block';
+            }
+        };
+    </script>
+</body>
+</html>
