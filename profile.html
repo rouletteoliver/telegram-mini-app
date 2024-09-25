@@ -4,152 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: #f4f4f4;
-        }
-        .header {
-            display: flex;
-            width: 100%;
-            justify-content: space-around;
-            padding: 10px 0;
-            background-color: #f8f8f8;
-            border-bottom: 1px solid #ddd;
-        }
-        .header button {
-            padding: 10px;
-            border: none;
-            background: none;
-            cursor: pointer;
-            font-size: 16px;
-            color: #333;
-        }
-        .header button.active {
-            color: blue;
-        }
-        .profile-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-        }
-        .balance-container {
             text-align: center;
-            margin-bottom: 20px;
         }
-        .balance-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .balance-value {
-            font-size: 24px;
-            color: #4CAF50;
-        }
-        .profile-details {
-            display: flex;
-            gap: 40px;
-            width: 90%;
-        }
-        .profile-details div {
-            flex: 1;
-            padding: 20px;
-            border: 1px solid #ccc;
-            text-align: center;
-            background-color: #fff;
-        }
-        .avatar {
-            width: 120px;
-            height: 120px;
+        #avatar {
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             margin-bottom: 10px;
-            background-color: #ddd;
-            object-fit: cover;
-            display: block;
         }
-        .connect-btn {
-            margin-top: 50px;
-            padding: 15px 30px;
-            border: 1px solid #ccc;
-            cursor: not-allowed;
-            background-color: #e0e0e0;
+        #balance {
+            font-size: 20px;
+            color: green;
+        }
+        #connect-evm {
+            margin-top: 20px;
+            padding: 10px 20px;
             font-size: 16px;
-        }
-        .winrate-info {
-            text-align: left;
-            font-size: 14px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <button id="search-button" class="inactive">search game</button>
-    <button id="game-button" class="inactive">game</button>
-    <button id="profile-button" class="active">profile</button>
-</div>
+    <h1>Баланс:</h1>
+    <p id="balance">0 Hitcoin</p>
+    <p>Кошелёк не подключён</p>
 
-<div class="profile-container">
-    <div class="balance-container">
-        <div class="balance-title">Баланс:</div>
-        <div class="balance-value" id="wallet-balance">0 Hitcoin</div>
+    <div>
+        <img id="avatar" src="default-avatar.png" alt="Avatar">
+        <p id="username">Имя пользователя</p>
     </div>
-    <div class="wallet-info" id="wallet-address">Кошелёк не подключён</div>
-    <div class="profile-details">
-        <div>
-            <img class="avatar" id="avatar" src="" alt="Avatar">
-            <div id="nickname">Имя</div>
-        </div>
-        <div>
-            <div class="winrate-info">
-                <strong>Winrate:</strong> —<br>
-                <strong>Wins:</strong> —<br>
-                <strong>Losses:</strong> —<br>
-            </div>
-        </div>
+
+    <div>
+        <p>Winrate: —</p>
+        <p>Wins: —</p>
+        <p>Losses: —</p>
     </div>
-    <button class="connect-btn">connect evm</button>
-</div>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script>
-    const tg = window.Telegram.WebApp;
-    const nickname = document.getElementById('nickname');
-    const avatar = document.getElementById('avatar');
+    <button id="connect-evm">connect evm</button>
 
-    // Функция для обновления данных пользователя
-    function updateUserData() {
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            nickname.textContent = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || 'Имя не найдено';
-            if (tg.initDataUnsafe.user.photo_url) {
-                avatar.src = tg.initDataUnsafe.user.photo_url;
-                avatar.onerror = () => {
-                    avatar.src = 'path/to/default/avatar.png'; // Устанавливаем стандартный аватар при ошибке
-                };
-            } else {
-                avatar.src = 'path/to/default/avatar.png'; // Устанавливаем стандартный аватар если фото нет
-            }
+    <script>
+        // Инициализация и получение данных пользователя
+        Telegram.WebApp.ready();
+
+        const user = Telegram.WebApp.initDataUnsafe.user;
+
+        // Проверяем, если данные пользователя доступны
+        if (user) {
+            const avatarUrl = user.photo_url; // URL аватара пользователя
+            const username = user.username || user.first_name; // Имя пользователя
+
+            // Обновляем элементы на странице
+            document.getElementById('avatar').src = avatarUrl || 'default-avatar.png'; // Используется изображение по умолчанию, если аватар не загружается
+            document.getElementById('username').textContent = username;
         } else {
-            nickname.textContent = 'Имя не найдено';
-            avatar.src = 'path/to/default/avatar.png'; // Если данные пользователя не найдены, используем стандартное изображение
+            console.error('Не удалось получить данные пользователя');
         }
-    }
-
-    // Инициализация Telegram WebApp
-    tg.ready();
-
-    // Пытаемся обновить данные пользователя
-    updateUserData();
-
-    // Событие при открытии WebApp для загрузки корректных данных
-    tg.onEvent('viewportChanged', updateUserData);
-</script>
-
+    </script>
 </body>
 </html>
