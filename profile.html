@@ -65,7 +65,7 @@
             background-color: #fff;
         }
         .avatar {
-            width: 120px; /* Увеличен размер аватара */
+            width: 120px;
             height: 120px;
             border-radius: 50%;
             margin-bottom: 10px;
@@ -103,7 +103,7 @@
     <div class="wallet-info" id="wallet-address">Кошелёк не подключён</div>
     <div class="profile-details">
         <div>
-            <img class="avatar" id="avatar" src="" alt="Avatar">
+            <img class="avatar" id="avatar" src="avatar.png" alt="Avatar">
             <div id="nickname">Имя</div>
         </div>
         <div>
@@ -119,18 +119,17 @@
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-    const gameButton = document.getElementById('game-button');
-
-    // Подтягиваем данные пользователя из Telegram
     const tg = window.Telegram.WebApp;
-
     const nickname = document.getElementById('nickname');
     const avatar = document.getElementById('avatar');
 
     function updateUserData() {
         // Проверяем, инициализирован ли объект tg и есть ли данные пользователя
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            // Отображение имени
             nickname.textContent = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || 'Имя не найдено';
+            
+            // Отображение аватара
             if (tg.initDataUnsafe.user.photo_url) {
                 avatar.src = tg.initDataUnsafe.user.photo_url;
                 avatar.onerror = () => {
@@ -145,13 +144,14 @@
         }
     }
 
+    // Инициализация Telegram WebApp и обновление данных пользователя
+    tg.ready();
     updateUserData();
 
-    gameButton.addEventListener('click', () => {
+    // Обработка нажатия на кнопку game
+    document.getElementById('game-button').addEventListener('click', () => {
         window.location.href = 'game.html';
     });
-
-    Telegram.WebApp.ready();
 </script>
 
 </body>
