@@ -1,8 +1,12 @@
-// Проверяем, что элементы корректно связаны
-const connectBtn = document.getElementById('connect-evm');
-const walletAddress = document.getElementById('wallet-address');
+document.addEventListener('DOMContentLoaded', () => {
+    const connectBtn = document.getElementById('connect-evm');
+    const walletAddress = document.getElementById('wallet-address');
 
-if (connectBtn && walletAddress) {
+    if (!connectBtn || !walletAddress) {
+        console.error("Кнопка подключения или элемент отображения адреса кошелька не найдены.");
+        return;
+    }
+
     // Функция подключения кошелька
     async function connectWallet() {
         try {
@@ -40,9 +44,4 @@ if (connectBtn && walletAddress) {
             disconnectWallet();
         }
     });
-
-    // Экспорт функций для вызова в profile.html
-    window.connectWallet = connectWallet;
-} else {
-    console.error("Кнопка подключения или элемент отображения адреса кошелька не найдены.");
-}
+});
