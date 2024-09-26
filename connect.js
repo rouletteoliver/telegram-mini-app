@@ -1,4 +1,6 @@
-// Подключение к MetaMask через ethers.js
+// connect.js
+
+// Определение элементов кнопки и адреса кошелька
 const connectBtn = document.getElementById('connect-evm');
 const walletAddress = document.getElementById('wallet-address');
 
@@ -6,6 +8,7 @@ const walletAddress = document.getElementById('wallet-address');
 async function connectWallet() {
   try {
     if (window.ethereum) {
+      // Подключение к MetaMask через ethers.js
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
