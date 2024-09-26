@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Mini App</title>
+    <!-- Подключение библиотеки Telegram Web App -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Подключение вашего скомпилированного JavaScript файла -->
+    <script src="output.js" defer></script> <!-- Убедитесь, что 'output.js' соответствует названию вашего скомпилированного JS файла -->
+</head>
+<body>
+    <!-- Основной контейнер для вашего приложения -->
+    <div id="root"></div>
+
+    <script>
+        // Инициализация приложения, подключение Telegram Web App
+        window.Telegram.WebApp.ready();
+    </script>
+</body>
+</html>
