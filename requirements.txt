@@ -1,2 +1,5 @@
 pyTelegramBotAPI
 requests
+Flask
+gunicorn
+ethers.js
