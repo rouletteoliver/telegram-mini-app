@@ -8,6 +8,12 @@ function initializeInterface() {
     const walletAddress = document.getElementById('wallet-address');
     const connectBtn = document.getElementById('connect-evm');
 
+    // Проверка наличия элементов
+    if (!nickname || !avatar || !walletAddress || !connectBtn) {
+        console.error("Некоторые элементы интерфейса не найдены, проверьте правильность ID в HTML.");
+        return;
+    }
+
     // Обновление информации о пользователе Telegram
     if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
         nickname.textContent = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || 'Имя не найдено';
@@ -28,7 +34,7 @@ function initializeInterface() {
     connectBtn.addEventListener('click', connectWallet);
 
     // Инициализация других кнопок
-    document.getElementById('game-button').addEventListener('click', () => {
+    document.getElementById('game-button')?.addEventListener('click', () => {
         window.location.href = 'game.html';
     });
 
@@ -58,16 +64,6 @@ async function connectWallet() {
     } else {
         alert('Пожалуйста, установите MetaMask или другой EVM-совместимый кошелек!');
     }
-}
-
-// Функция отключения кошелька
-function disconnectWallet() {
-    const walletAddress = document.getElementById('wallet-address');
-    const connectBtn = document.getElementById('connect-evm');
-
-    walletAddress.textContent = 'Кошелёк не подключён';
-    connectBtn.textContent = 'connect evm';
-    connectBtn.classList.remove('disconnect-btn');
 }
 
 // Запуск приложения
