@@ -156,14 +156,18 @@
     tg.ready();
     updateUserData();
 
-    connectBtn.addEventListener('click', () => {
-    connectWallet(); // Вызов функции подключения, находящейся в connect.js
-});
+    // Проверьте, что функция connectWallet определена и доступна в connect.js
+    if (typeof connectWallet === 'function') {
+        connectBtn.addEventListener('click', () => {
+            connectWallet();
+        });
+    } else {
+        console.error('Функция connectWallet не найдена. Проверьте файл connect.js.');
+    }
 
     document.getElementById('game-button').addEventListener('click', () => {
         window.location.href = 'game.html';
     });
 </script>
 
-</body>
-</html>
+</body
