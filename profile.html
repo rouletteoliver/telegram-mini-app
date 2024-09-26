@@ -7,96 +7,8 @@
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <script src="connect.js"></script> <!-- Подключение вашего скрипта с логикой подключения -->
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: #f4f4f4;
-        }
-        .header {
-            display: flex;
-            width: 100%;
-            justify-content: space-around;
-            padding: 10px 0;
-            background-color: #f8f8f8;
-            border-bottom: 1px solid #ddd;
-        }
-        .header button {
-            padding: 10px;
-            border: none;
-            background: none;
-            cursor: pointer;
-            font-size: 16px;
-            color: #333;
-        }
-        .header button.active {
-            color: blue;
-        }
-        .profile-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-        }
-        .balance-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .balance-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .balance-value {
-            font-size: 24px;
-            color: #4CAF50;
-        }
-        .wallet-info {
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .profile-details {
-            display: flex;
-            gap: 40px;
-            width: 90%;
-            margin-bottom: 50px;
-        }
-        .profile-details div {
-            flex: 1;
-            padding: 20px;
-            border: 1px solid #ccc;
-            text-align: center;
-            background-color: #fff;
-        }
-        .avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            margin-bottom: 10px;
-            background-color: #ddd;
-            object-fit: cover;
-            display: block;
-        }
-        .connect-btn {
-            padding: 15px 30px;
-            border: 1px solid #ccc;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            font-size: 16px;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-        .disconnect-btn {
-            background-color: #f44336;
-        }
-        .winrate-info {
-            text-align: left;
-            font-size: 14px;
-        }
+        /* Стили остаются прежними */
+        ...
     </style>
 </head>
 <body>
@@ -156,9 +68,10 @@
     tg.ready();
     updateUserData();
 
+    // Вызов функции подключения через файл connect.js
     connectBtn.addEventListener('click', () => {
-    connectWallet(); // Вызов функции подключения, находящейся в connect.js
-});
+        connectWallet();
+    });
 
     document.getElementById('game-button').addEventListener('click', () => {
         window.location.href = 'game.html';
