@@ -1,11 +1,7 @@
-// Подключение через ethers.js CDN
-// Убедитесь, что ethers.js загружен в profile.html
-
-// Определение элементов кнопки и адреса кошелька
+// Проверяем, что элементы корректно связаны
 const connectBtn = document.getElementById('connect-evm');
 const walletAddress = document.getElementById('wallet-address');
 
-// Проверьте, что кнопка и адрес существуют
 if (connectBtn && walletAddress) {
     // Функция подключения кошелька
     async function connectWallet() {
@@ -36,6 +32,17 @@ if (connectBtn && walletAddress) {
         connectBtn.classList.remove('disconnect-btn');
     }
 
-    // Логика для кнопки подключения/отключения
+    // Событие для кнопки подключения/отключения
     connectBtn.addEventListener('click', () => {
-        if (connectBtn.textContent === 'connect evm
+        if (connectBtn.textContent === 'connect evm') {
+            connectWallet();
+        } else {
+            disconnectWallet();
+        }
+    });
+
+    // Экспорт функций для вызова в profile.html
+    window.connectWallet = connectWallet;
+} else {
+    console.error("Кнопка подключения или элемент отображения адреса кошелька не найдены.");
+}
