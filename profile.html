@@ -115,7 +115,7 @@
     <div class="wallet-info" id="wallet-address">Кошелёк не подключён</div>
     <div class="profile-details">
         <div>
-            <img class="avatar" id="avatar" src="avatar.png" alt="Avatar">
+            <img class="avatar" id="avatar" src="img/avatar.png" alt="Avatar">
             <div id="nickname">Имя</div>
         </div>
         <div>
@@ -142,14 +142,14 @@
             if (tg.initDataUnsafe.user.photo_url) {
                 avatar.src = tg.initDataUnsafe.user.photo_url;
                 avatar.onerror = () => {
-                    avatar.src = 'avatar.png';
+                    avatar.src = 'img/avatar.png';
                 };
             } else {
-                avatar.src = 'avatar.png';
+                avatar.src = 'img/avatar.png';
             }
         } else {
             nickname.textContent = 'Имя не найдено';
-            avatar.src = 'avatar.png';
+            avatar.src = 'img/avatar.png';
         }
     }
 
