@@ -12,7 +12,7 @@ def send_welcome(message):
     print("Получена команда /start")  # Проверка получения команды /start
     
     # Путь к изображению
-    photo_path = 'start.png'
+    photo_path = 'img/start.png'
     caption_text = "Приветствую тебя во FlipS! Здесь ты можешь флипнуть Hitcoin против другого игрока."
     
     # Попробуем отправить изображение
