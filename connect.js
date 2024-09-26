@@ -1,6 +1,4 @@
-import { ethers } from 'ethers';
-
-// Определение элементов кнопки и адреса кошелька
+// Подключение к MetaMask через ethers.js
 const connectBtn = document.getElementById('connect-evm');
 const walletAddress = document.getElementById('wallet-address');
 
@@ -8,7 +6,6 @@ const walletAddress = document.getElementById('wallet-address');
 async function connectWallet() {
   try {
     if (window.ethereum) {
-      // Подключение к MetaMask через ethers.js
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
@@ -42,5 +39,3 @@ connectBtn.addEventListener('click', () => {
     disconnectWallet();
   }
 });
-
-export { connectWallet, disconnectWallet };
