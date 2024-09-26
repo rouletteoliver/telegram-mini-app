@@ -1,14 +1,14 @@
 // Определение элементов кнопки и адреса кошелька
-let connectBtn = document.getElementById('connect-evm');
-let walletAddress = document.getElementById('wallet-address');
+const connectBtn = document.getElementById('connect-evm');
+const walletAddress = document.getElementById('wallet-address');
 
-// Проверка наличия кнопки для избежания ошибок
+// Проверка наличия кнопки и элемента адреса кошелька
 if (!connectBtn) {
-  console.error("Кнопка подключения не найдена. Проверьте идентификатор элемента.");
-  connectBtn = document.createElement('button'); // Добавляем создание кнопки, если она не найдена
-  connectBtn.id = 'connect-evm';
-  connectBtn.textContent = 'connect evm';
-  document.body.appendChild(connectBtn); // Привязываем кнопку к странице
+  console.error("Кнопка подключения не найдена. Проверьте идентификатор элемента connectBtn.");
+}
+
+if (!walletAddress) {
+  console.error("Элемент для отображения адреса кошелька не найден. Проверьте идентификатор элемента walletAddress.");
 }
 
 // Функция подключения кошелька
@@ -42,10 +42,12 @@ function disconnectWallet() {
 }
 
 // Логика для кнопки подключения/отключения
-connectBtn.addEventListener('click', () => {
-  if (connectBtn.textContent === 'connect evm') {
-    connectWallet();
-  } else {
-    disconnectWallet();
-  }
-});
+if (connectBtn) {
+  connectBtn.addEventListener('click', () => {
+    if (connectBtn.textContent === 'connect evm') {
+      connectWallet();
+    } else {
+      disconnectWallet();
+    }
+  });
+}
