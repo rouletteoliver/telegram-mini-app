@@ -5,23 +5,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Mini App - Start</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            background-color: #2b2b2b;
+            color: #fff;
             display: flex;
             flex-direction: column;
             height: 100vh;
-            overflow: hidden;
-            background-color: #2b2b2b;
-            color: #fff;
+            margin: 0;
         }
         .nav {
+            background-color: #f0f0f0;
+            padding: 10px;
             display: flex;
             justify-content: space-around;
-            background-color: #f0f0f0;
-            padding: 10px 0;
             border-bottom: 2px solid #ccc;
         }
         .nav button {
@@ -32,16 +32,12 @@
             font-size: 16px;
             color: #007bff;
         }
-        .nav button:hover {
-            background-color: #ddd;
-        }
         .content {
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 24px;
-            color: #fff;
         }
     </style>
 </head>
@@ -54,10 +50,8 @@
     <div class="content">
         <p>кек</p>
     </div>
-</body>
-</html>
-
-</html>
-
+    <script>
+        Telegram.WebApp.ready(); // Инициализация Telegram Web Apps SDK
+    </script>
 </body>
 </html>
