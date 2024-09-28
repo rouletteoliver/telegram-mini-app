@@ -2,7 +2,7 @@ import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
 # Твой API токен
-API_TOKEN = '7713287680:AAFW-S3_71_PbWlNG4K7yIbiR9pkr-t-Y4s'
+API_TOKEN = '7713287680:AAEjz5BhCiIYSQHllKj33l4DmpxqREcbuPU'
 bot = telebot.TeleBot(API_TOKEN)
 
 print("Бот запущен...")  # Проверка, что бот вообще стартует
