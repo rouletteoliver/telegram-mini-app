@@ -4,13 +4,65 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Bot Start Page</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="output.js"></script>
-
+    <title>Mini App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .nav {
+            display: flex;
+            justify-content: space-around;
+            background-color: #f0f0f0;
+            padding: 10px 0;
+            border-bottom: 2px solid #ccc;
+        }
+        .nav button {
+            background: none;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .nav button:hover {
+            background-color: #ddd;
+        }
+        .content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+        }
+    </style>
 </head>
 <body>
-    <div id="root"></div>
-    <script type="module" src="output.js"></script>
+    <div class="nav">
+        <button id="searchGame">search game</button>
+        <button id="game">game</button>
+        <button id="profile">profile</button>
+    </div>
+    <div class="content">
+        <p>тест</p>
+    </div>
+    <script>
+        // Навешиваем события на кнопки, чтобы позже добавить функциональность
+        document.getElementById('searchGame').onclick = () => {
+            // Логика для кнопки "search game" будет добавлена позже
+            alert('search game clicked');
+        };
+        document.getElementById('game').onclick = () => {
+            // Логика для кнопки "game" будет добавлена позже
+            alert('game clicked');
+        };
+        document.getElementById('profile').onclick = () => {
+            // Логика для кнопки "profile" будет добавлена позже
+            alert('profile clicked');
+        };
+    </script>
 </body>
 </html>
