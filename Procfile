@@ -1,1 +1,1 @@
-worker: java -jar build/libs/your-app.jar
+worker: python telegram_flips_bot.py
