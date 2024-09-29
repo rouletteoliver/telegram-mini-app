@@ -3,7 +3,7 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from flask import Flask, jsonify, request
 
 # Твой API токен
-API_TOKEN = 'твой_токен'
+API_TOKEN = '7713287680:AAEjz5BhCiIYSQHllKj33l4DmpxqREcbuPU'
 bot = telebot.TeleBot(API_TOKEN)
 
 app = Flask(__name__)
