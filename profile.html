@@ -129,10 +129,13 @@
 
         // Получение данных пользователя из Telegram и обновление профиля
         const user = Telegram.WebApp.initDataUnsafe.user;
+
+        // Используем avatarUrl, переданный через бот
+        const avatarUrlFromBot = "{{avatar_url}}";  // Здесь подставляем полученный URL от Python кода
+
         if (user) {
             document.getElementById('username').innerText = user.first_name;
-            // Пример: Мы можем получить URL аватара от вашего бота и использовать его здесь
-            const avatarUrl = user.photo_url || null;  // Здесь вы можете передавать URL, полученный от бота
+            const avatarUrl = avatarUrlFromBot || user.photo_url || null;  // Используем URL от бота или стандартный
             setAvatar(avatarUrl);
         } else {
             setAvatar(null);
