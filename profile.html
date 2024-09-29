@@ -115,6 +115,27 @@
     </div>
 
     <script>
+        // Функция для отправки ошибок в Telegram-чат
+        function reportErrorToTelegram(errorMessage) {
+            const chatId = '-1002407611018';  // Ваш chat_id
+            const botToken = 'YOUR_BOT_TOKEN';  // Ваш API token бота
+
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+            const data = {
+                chat_id: chatId,
+                text: `Ошибка: ${errorMessage}`
+            };
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).catch((error) => console.error('Ошибка при отправке в Telegram:', error));
+        }
+
         // Инициализация Telegram SDK
         Telegram.WebApp.ready();
 
@@ -197,7 +218,8 @@
                     document.getElementById('wallet-address').innerText = selectedAccount; // Отображаем адрес кошелька
                 }
             } catch (error) {
-                console.error("Ошибка подключения: ", error);
+                reportErrorToTelegram(error.message);  // Отправляем сообщение об ошибке в Telegram чат
+                console.error("Ошибка подключения: ", error);  // Дополнительно выводим в консоль
             }
         }
 
