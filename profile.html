@@ -124,13 +124,14 @@
                         name: "MetaMask/Rabby",
                         description: "Connect to your MetaMask or Rabby Wallet"
                     },
-                    package: null
+                    package: null,
+                    options: {}
                 }
             };
 
             web3Modal = new window.Web3Modal.default({
-                cacheProvider: false,
-                providerOptions,
+                cacheProvider: false, // Отключает кэширование провайдера
+                providerOptions, // Подключаем провайдеры
                 theme: "dark"
             });
         }
