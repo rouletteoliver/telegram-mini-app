@@ -7,7 +7,6 @@
     <title>Profile</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-    <script src="https://unpkg.com/@walletconnect/web3-provider@1.7.8/dist/umd/index.min.js"></script>
     <script src="https://unpkg.com/web3modal"></script>
     <style>
         body {
@@ -19,6 +18,7 @@
             height: 100vh;
             background-color: #2b2b2b;
             color: #fff;
+            overflow-x: hidden;
         }
         .nav {
             display: flex;
@@ -80,6 +80,7 @@
             font-size: 16px;
             cursor: pointer;
             border-radius: 5px;
+            margin-top: 20px;
         }
         .connect-button:hover {
             background-color: #0056b3;
@@ -118,17 +119,18 @@
 
         function init() {
             const providerOptions = {
-                walletconnect: {
-                    package: window.WalletConnectProvider.default, // Пакет WalletConnect
-                    options: {
-                        infuraId: "747499a6c52b4ed482a4899ae595b156" // Ваш Infura ID
-                    }
+                injected: {
+                    display: {
+                        name: "MetaMask/Rabby",
+                        description: "Connect to your MetaMask or Rabby Wallet"
+                    },
+                    package: null
                 }
             };
 
             web3Modal = new window.Web3Modal.default({
-                cacheProvider: false, // Отключает кэширование провайдера
-                providerOptions, // Подключаем провайдеры
+                cacheProvider: false,
+                providerOptions,
                 theme: "dark"
             });
         }
@@ -152,4 +154,3 @@
     </script>
 </body>
 </html>
-
