@@ -115,6 +115,12 @@
     </div>
 
     <script>
+        let connected = false; // Флаг для отслеживания подключения
+        let web3Modal;
+        let provider;
+        let web3;
+        let selectedAccount;
+
         // Инициализация Telegram SDK
         Telegram.WebApp.ready();
 
@@ -138,11 +144,6 @@
         }
 
         // Инициализация Web3Modal для десктопов
-        let web3Modal;
-        let provider;
-        let web3;
-        let selectedAccount;
-
         function init() {
             const providerOptions = {
                 injected: {
@@ -159,6 +160,17 @@
                 providerOptions, // Подключаем провайдеры
                 theme: "dark"
             });
+        }
+
+        // Функция для подключения или отключения кошелька
+        async function toggleWallet() {
+            if (connected) {
+                // Отключение
+                disconnectWallet();
+            } else {
+                // Подключение
+                connectWallet();
+            }
         }
 
         async function connectWallet() {
@@ -183,13 +195,41 @@
                     const accounts = await web3.eth.getAccounts();
                     selectedAccount = accounts[0];
                     document.getElementById('wallet-address').innerText = selectedAccount; // Отображаем адрес кошелька
+
+                    // Изменяем состояние на подключенное
+                    connected = true;
+                    updateButton();
                 }
             } catch (error) {
                 console.error("Ошибка подключения: ", error);
             }
         }
 
-        document.getElementById('connect-button').addEventListener('click', connectWallet);
+        function disconnectWallet() {
+            // Логика для отключения Web3Modal
+            if (provider && provider.close) {
+                provider.close(); // Закрываем провайдер Web3Modal, если доступно
+            }
+            provider = null;
+            selectedAccount = null;
+            document.getElementById('wallet-address').innerText = "wallet not connected"; // Обновляем интерфейс
+
+            // Изменяем состояние на отключенное
+            connected = false;
+            updateButton();
+        }
+
+        // Обновление кнопки в зависимости от состояния подключения
+        function updateButton() {
+            const button = document.getElementById('connect-button');
+            if (connected) {
+                button.innerText = "disconnect evm";
+            } else {
+                button.innerText = "connect evm";
+            }
+        }
+
+        document.getElementById('connect-button').addEventListener('click', toggleWallet);
 
         window.addEventListener('load', init); // Инициализация Web3Modal при загрузке страницы
     </script>
