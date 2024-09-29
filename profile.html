@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Profile</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -32,6 +32,9 @@
             font-size: 16px;
             color: #007bff;
         }
+        .nav button:hover {
+            background-color: #ddd;
+        }
         .content {
             flex: 1;
             padding: 20px;
@@ -56,17 +59,27 @@
             width: 80%;
             margin-bottom: 20px;
         }
+        .player-stats div {
+            text-align: center;
+        }
         .avatar {
-            width: 80px;
-            height: 80px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             background-color: #555;
             margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
+        }
+        .connect-button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
             color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .connect-button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -78,11 +91,11 @@
     </div>
     <div class="content">
         <div class="profile-header">Баланс: 0</div>
-        <div id="wallet-address" class="profile-info">wallet not connected</div>
+        <div class="profile-info">not connected</div>
         <div class="player-stats">
             <div>
-                <div id="avatar" class="avatar"></div> <!-- Место для аватара -->
-                <div id="username">nickname</div> <!-- Отображение имени пользователя -->
+                <div class="avatar"></div>
+                <div>nickname</div>
             </div>
             <div>
                 <div>winrate</div>
@@ -90,34 +103,7 @@
                 <div>Поражений: 0</div>
             </div>
         </div>
-        <button id="connect-button" class="connect-button">connect evm</button>
+        <button class="connect-button">connect evm</button>
     </div>
-
-    <script>
-        // Функция для установки аватара
-        async function setAvatar() {
-            const userId = Telegram.WebApp.initDataUnsafe.user.id;
-            const response = await fetch(`/api/get_avatar?user_id=${userId}`);
-            const data = await response.json();
-
-            const avatarElement = document.getElementById('avatar');
-            if (data.avatar_url) {
-                avatarElement.style.backgroundImage = `url(${data.avatar_url})`;
-                avatarElement.style.backgroundSize = 'cover';
-            } else {
-                avatarElement.innerText = "N/A";
-            }
-        }
-
-        // Инициализация Telegram SDK
-        Telegram.WebApp.ready();
-
-        // Отображение имени пользователя
-        const user = Telegram.WebApp.initDataUnsafe.user;
-        document.getElementById('username').innerText = user.first_name;
-
-        // Установка аватара
-        setAvatar();
-    </script>
 </body>
 </html>
