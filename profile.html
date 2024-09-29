@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -138,12 +138,7 @@
             }
         }
 
-        // Проверка платформы Telegram Web App
-        function isTelegramMobileApp() {
-            return Telegram.WebApp.platform === "ios" || Telegram.WebApp.platform === "android";
-        }
-
-        // Инициализация Web3Modal с кэшированием
+        // Инициализация Web3Modal с кэшированием провайдера для всех устройств
         function init() {
             const providerOptions = {
                 injected: {
@@ -178,33 +173,29 @@
             }
         }
 
+        // Подключение через Web3Modal
         async function connectWallet() {
             try {
-                if (isTelegramMobileApp()) {
-                    // Если это мобильное устройство, используем deeplink для MetaMask
-                    window.location.href = 'https://metamask.app.link/dapp/https://rouletteoliver.github.io/telegram-mini-app/';
-                } else {
-                    // Для десктопа используем Web3Modal
-                    provider = await web3Modal.connect(); // Запускает окно выбора кошелька
-                    web3 = new Web3(provider);
+                // Используем Web3Modal как для десктопа, так и для мобильных устройств
+                provider = await web3Modal.connect(); // Запускает окно выбора кошелька на всех устройствах
+                web3 = new Web3(provider);
 
-                    provider.on("accountsChanged", (accounts) => {
-                        selectedAccount = accounts[0];
-                        document.getElementById('wallet-address').innerText = selectedAccount; // Отображаем адрес кошелька
-                    });
-
-                    provider.on("chainChanged", () => {
-                        window.location.reload();
-                    });
-
-                    const accounts = await web3.eth.getAccounts();
+                provider.on("accountsChanged", (accounts) => {
                     selectedAccount = accounts[0];
                     document.getElementById('wallet-address').innerText = selectedAccount; // Отображаем адрес кошелька
+                });
 
-                    // Изменяем состояние на подключенное
-                    connected = true;
-                    updateButton();
-                }
+                provider.on("chainChanged", () => {
+                    window.location.reload();
+                });
+
+                const accounts = await web3.eth.getAccounts();
+                selectedAccount = accounts[0];
+                document.getElementById('wallet-address').innerText = selectedAccount; // Отображаем адрес кошелька
+
+                // Изменяем состояние на подключенное
+                connected = true;
+                updateButton();
             } catch (error) {
                 console.error("Ошибка подключения: ", error);
             }
@@ -240,3 +231,4 @@
     </script>
 </body>
 </html>
+
