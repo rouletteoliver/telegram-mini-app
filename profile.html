@@ -71,6 +71,11 @@
             border-radius: 50%;
             background-color: #555;
             margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: #fff;
         }
         .connect-button {
             padding: 10px 20px;
@@ -97,7 +102,7 @@
         <div id="wallet-address" class="profile-info">wallet not connected</div>
         <div class="player-stats">
             <div>
-                <img id="avatar" class="avatar" src="#" alt="Avatar"> <!-- Изменен размер аватара -->
+                <div id="avatar" class="avatar"></div> <!-- Аватар теперь может отображать первую букву имени -->
                 <div id="username">nickname</div> <!-- Отображение имени пользователя -->
             </div>
             <div>
@@ -117,7 +122,14 @@
         const user = Telegram.WebApp.initDataUnsafe.user;
         if (user) {
             document.getElementById('username').innerText = user.first_name;
-            document.getElementById('avatar').src = user.photo_url || "default-avatar.png"; // Установка аватара
+            const avatarElement = document.getElementById('avatar');
+
+            if (user.photo_url) {
+                avatarElement.style.backgroundImage = `url(${user.photo_url})`; // Установка аватара
+                avatarElement.style.backgroundSize = 'cover'; // Настройка размера
+            } else {
+                avatarElement.innerText = user.first_name.charAt(0); // Если нет аватара, отображаем первую букву имени
+            }
         }
 
         // Инициализация Web3Modal и провайдеров
@@ -146,27 +158,43 @@
 
         async function connectWallet() {
             try {
-                provider = await web3Modal.connect(); // Запускает окно выбора кошелька
-                web3 = new Web3(provider);
+                if (isMobileDevice()) {
+                    // Если это мобильное устройство, используем deep linking для MetaMask или Rabby
+                    if (window.ethereum && window.ethereum.isMetaMask) {
+                        window.location.href = 'https://metamask.app.link/dapp/https://rouletteoliver.github.io/telegram-mini-app/';
+                    } else if (window.ethereum && window.ethereum.isRabby) {
+                        window.location.href = 'rabby://https://rouletteoliver.github.io/telegram-mini-app/';
+                    }
+                } else {
+                    // Для десктопа используем Web3Modal
+                    provider = await web3Modal.connect(); // Запускает окно выбора кошелька
+                    web3 = new Web3(provider);
 
-                provider.on("accountsChanged", (accounts) => {
+                    provider.on("accountsChanged", (accounts) => {
+                        selectedAccount = accounts[0];
+                        document.getElementById('wallet-address').innerText = selectedAccount; // Отображаем адрес кошелька
+                    });
+
+                    provider.on("chainChanged", () => {
+                        window.location.reload();
+                    });
+
+                    const accounts = await web3.eth.getAccounts();
                     selectedAccount = accounts[0];
                     document.getElementById('wallet-address').innerText = selectedAccount; // Отображаем адрес кошелька
-                });
-
-                provider.on("chainChanged", () => {
-                    window.location.reload();
-                });
-
-                const accounts = await web3.eth.getAccounts();
-                selectedAccount = accounts[0];
-                document.getElementById('wallet-address').innerText = selectedAccount; // Отображаем адрес кошелька
+                }
             } catch (error) {
                 console.error("Ошибка подключения: ", error);
             }
         }
 
         document.getElementById('connect-button').addEventListener('click', connectWallet);
+
+        // Проверка, мобильное ли устройство
+        function isMobileDevice() {
+            return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+        }
+
         window.addEventListener('load', init); // Инициализация Web3Modal при загрузке страницы
     </script>
 </body>
