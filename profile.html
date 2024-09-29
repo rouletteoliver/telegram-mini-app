@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Profile</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -129,13 +128,10 @@
 
         // Получение данных пользователя из Telegram и обновление профиля
         const user = Telegram.WebApp.initDataUnsafe.user;
-
-        // Используем avatarUrl, переданный через бот
-        const avatarUrlFromBot = "{{avatar_url}}";  // Здесь подставляем полученный URL от Python кода
-
         if (user) {
             document.getElementById('username').innerText = user.first_name;
-            const avatarUrl = avatarUrlFromBot || user.photo_url || null;  // Используем URL от бота или стандартный
+            // Пример: Мы можем получить URL аватара от вашего бота и использовать его здесь
+            const avatarUrl = user.photo_url || null;  // Здесь вы можете передавать URL, полученный от бота
             setAvatar(avatarUrl);
         } else {
             setAvatar(null);
