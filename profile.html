@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -32,9 +32,6 @@
             font-size: 16px;
             color: #007bff;
         }
-        .nav button:hover {
-            background-color: #ddd;
-        }
         .content {
             flex: 1;
             padding: 20px;
@@ -59,9 +56,6 @@
             width: 80%;
             margin-bottom: 20px;
         }
-        .player-stats div {
-            text-align: center;
-        }
         .avatar {
             width: 80px;
             height: 80px;
@@ -73,18 +67,6 @@
             justify-content: center;
             font-size: 36px;
             color: #fff;
-        }
-        .connect-button {
-            padding: 10px 20px;
-            border: none;
-            background-color: #007bff;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .connect-button:hover {
-            background-color: #0056b3;
         }
     </style>
 </head>
@@ -113,29 +95,29 @@
 
     <script>
         // Функция для установки аватара
-        function setAvatar(avatarUrl) {
+        async function setAvatar() {
+            const userId = Telegram.WebApp.initDataUnsafe.user.id;
+            const response = await fetch(`/api/get_avatar?user_id=${userId}`);
+            const data = await response.json();
+
             const avatarElement = document.getElementById('avatar');
-            if (avatarUrl) {
-                avatarElement.style.backgroundImage = `url(${avatarUrl})`; // Устанавливаем URL аватара
+            if (data.avatar_url) {
+                avatarElement.style.backgroundImage = `url(${data.avatar_url})`;
                 avatarElement.style.backgroundSize = 'cover';
             } else {
-                avatarElement.innerText = "N/A"; // Заглушка, если нет аватара
+                avatarElement.innerText = "N/A";
             }
         }
 
         // Инициализация Telegram SDK
         Telegram.WebApp.ready();
 
-        // Получение данных пользователя из Telegram и обновление профиля
+        // Отображение имени пользователя
         const user = Telegram.WebApp.initDataUnsafe.user;
-        if (user) {
-            document.getElementById('username').innerText = user.first_name;
-            // Пример: Мы можем получить URL аватара от вашего бота и использовать его здесь
-            const avatarUrl = user.photo_url || null;  // Здесь вы можете передавать URL, полученный от бота
-            setAvatar(avatarUrl);
-        } else {
-            setAvatar(null);
-        }
+        document.getElementById('username').innerText = user.first_name;
+
+        // Установка аватара
+        setAvatar();
     </script>
 </body>
 </html>
