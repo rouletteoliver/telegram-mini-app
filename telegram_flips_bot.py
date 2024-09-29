@@ -30,7 +30,7 @@ def send_welcome(message):
     
     # Попытка отправить сообщение с кнопкой
     try:
-        bot.send_message(message.chat.id, "test", reply_markup=markup)
+        bot.send_message(message.chat.id, "Жми чтобы флипнуть", reply_markup=markup)
         print("Сообщение с кнопкой отправлено")
     except Exception as e:
         print(f"Ошибка отправки сообщения: {e}")
