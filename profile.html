@@ -86,6 +86,29 @@
         .connect-button:hover {
             background-color: #0056b3;
         }
+        .log-console {
+            width: 80%;
+            height: 150px;
+            background-color: #333;
+            color: #fff;
+            overflow-y: scroll;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .copy-button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .copy-button:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 <body>
@@ -109,6 +132,12 @@
             </div>
         </div>
         <button id="connect-button" class="connect-button">connect evm (неактивна)</button>
+        
+        <!-- Мини консоль -->
+        <div class="log-console" id="log-console">
+            <p>Здесь будут отображаться логи...</p>
+        </div>
+        <button class="copy-button" onclick="copyLogs()">Copy Logs</button>
     </div>
 
     <script>
@@ -117,6 +146,14 @@
         let provider;
         let web3;
         let selectedAccount;
+
+        // Функция для добавления логов в мини-консоль
+        function addLog(logText) {
+            const logConsole = document.getElementById('log-console');
+            const newLog = document.createElement('p');
+            newLog.textContent = logText;
+            logConsole.appendChild(newLog); // Добавляем новый лог в консоль
+        }
 
         // Инициализация Telegram SDK
         Telegram.WebApp.ready();
@@ -130,20 +167,33 @@
 
             // Проверяем, что Telegram возвращает photo_url
             if (user.photo_url) {
-                console.log("URL фото пользователя:", user.photo_url); // Лог для проверки URL фото
+                addLog(`URL фото пользователя: ${user.photo_url}`); // Лог для проверки URL фото
                 avatarElement.style.backgroundImage = `url(${user.photo_url})`;
                 avatarElement.style.backgroundSize = 'cover';
                 avatarElement.style.backgroundPosition = 'center';
             } else {
                 // Если нет фотографии, отображаем первую букву имени
-                console.log("Аватар отсутствует, отображаем первую букву имени");
+                addLog("Аватар отсутствует, отображаем первую букву имени");
                 avatarElement.innerText = user.first_name.charAt(0);
                 avatarElement.style.backgroundColor = '#555'; // Фон для аватара без фото
                 avatarElement.style.color = '#fff'; // Цвет текста (первая буква)
             }
         } else {
-            console.log("Ошибка получения данных пользователя");
+            addLog("Ошибка получения данных пользователя");
         }
+
+        // Функция для копирования логов
+        function copyLogs() {
+            const logConsole = document.getElementById('log-console');
+            const range = document.createRange();
+            range.selectNode(logConsole);
+            window.getSelection().removeAllRanges(); // Очищаем выделение
+            window.getSelection().addRange(range); // Выделяем текст
+            document.execCommand('copy'); // Копируем выделенный текст
+            window.getSelection().removeAllRanges(); // Очищаем выделение после копирования
+            alert("Логи скопированы!");
+        }
+
     </script>
 </body>
 </html>
