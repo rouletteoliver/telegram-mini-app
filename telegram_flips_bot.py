@@ -1,6 +1,7 @@
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from flask import Flask, jsonify, request
+import requests
 
 # Твой API токен
 API_TOKEN = '7713287680:AAEjz5BhCiIYSQHllKj33l4DmpxqREcbuPU'
@@ -34,6 +35,15 @@ def send_welcome(message):
         file_info = bot.get_file(file_id)
         avatar_url = f"https://api.telegram.org/file/bot{API_TOKEN}/{file_info.file_path}"
         user_avatars[str(user_id)] = avatar_url  # Сохраняем в словаре
+
+    # Отправка стартового изображения
+    photo_path = 'img/start.png'
+    caption_text = "FlipS! Здесь ты можешь флипнуть Hitcoin против другого игрока."
+
+    try:
+        bot.send_photo(message.chat.id, open(photo_path, 'rb'), caption=caption_text)
+    except Exception as e:
+        print(f"Ошибка отправки изображения: {e}")
 
     # Создание кнопки для Mini App
     markup = InlineKeyboardMarkup()
