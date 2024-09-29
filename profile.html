@@ -143,7 +143,7 @@
             return Telegram.WebApp.platform === "ios" || Telegram.WebApp.platform === "android";
         }
 
-        // Инициализация Web3Modal для десктопов
+        // Инициализация Web3Modal с кэшированием
         function init() {
             const providerOptions = {
                 injected: {
@@ -156,10 +156,15 @@
             };
 
             web3Modal = new window.Web3Modal.default({
-                cacheProvider: false, // Отключает кэширование провайдера
+                cacheProvider: true, // Включаем кэширование провайдера
                 providerOptions, // Подключаем провайдеры
                 theme: "dark"
             });
+
+            // Если провайдер был кэширован, автоматически подключаем кошелек
+            if (web3Modal.cachedProvider) {
+                connectWallet(); // Восстанавливаем подключение кошелька
+            }
         }
 
         // Функция для подключения или отключения кошелька
