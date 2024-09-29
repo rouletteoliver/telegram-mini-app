@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Profile</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="https://unpkg.com/web3modal"></script>
     <style>
@@ -18,7 +19,6 @@
             height: 100vh;
             background-color: #2b2b2b;
             color: #fff;
-            overflow-x: hidden;
         }
         .nav {
             display: flex;
@@ -80,7 +80,6 @@
             font-size: 16px;
             cursor: pointer;
             border-radius: 5px;
-            margin-top: 20px;
         }
         .connect-button:hover {
             background-color: #0056b3;
@@ -98,8 +97,8 @@
         <div id="wallet-address" class="profile-info">wallet not connected</div>
         <div class="player-stats">
             <div>
-                <div class="avatar"></div>
-                <div>nickname</div>
+                <img id="avatar" class="avatar" src="#" alt="Avatar"> <!-- Отображение аватара -->
+                <div id="username">nickname</div> <!-- Отображение имени пользователя -->
             </div>
             <div>
                 <div>winrate</div>
@@ -111,6 +110,16 @@
     </div>
 
     <script>
+        // Инициализация Telegram SDK
+        Telegram.WebApp.ready();
+
+        // Получение данных пользователя из Telegram и обновление профиля
+        const user = Telegram.WebApp.initDataUnsafe.user;
+        if (user) {
+            document.getElementById('username').innerText = user.first_name;
+            document.getElementById('avatar').src = user.photo_url || "default-avatar.png"; // Установка аватара
+        }
+
         // Инициализация Web3Modal и провайдеров
         let web3Modal;
         let provider;
@@ -124,8 +133,7 @@
                         name: "MetaMask/Rabby",
                         description: "Connect to your MetaMask or Rabby Wallet"
                     },
-                    package: null,
-                    options: {}
+                    package: null
                 }
             };
 
@@ -144,7 +152,8 @@
                 const accounts = await web3.eth.getAccounts();
                 selectedAccount = accounts[0];
 
-                document.getElementById('wallet-address').innerText = selectedAccount; // Отображаем адрес кошелька
+                // Обновление отображения адреса кошелька
+                document.getElementById('wallet-address').innerText = selectedAccount;
             } catch (error) {
                 console.error("Ошибка подключения: ", error);
             }
