@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Profile</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -63,11 +62,13 @@
             text-align: center;
         }
         .avatar {
-            width: 50px;
-            height: 50px;
+            width: 150px; /* Увеличил размер аватара */
+            height: 150px;
             border-radius: 50%;
             background-color: #555;
             margin-bottom: 5px;
+            background-size: cover;
+            background-position: center;
         }
         .connect-button {
             padding: 10px 20px;
@@ -91,11 +92,11 @@
     </div>
     <div class="content">
         <div class="profile-header">Баланс: 0</div>
-        <div class="profile-info">not connected</div>
+        <div class="profile-info" id="user-status">not connected</div>
         <div class="player-stats">
             <div>
-                <div class="avatar"></div>
-                <div>nickname</div>
+                <div id="avatar" class="avatar"></div> <!-- Место для аватара -->
+                <div id="username">nickname</div> <!-- Место для имени пользователя -->
             </div>
             <div>
                 <div>winrate</div>
@@ -105,5 +106,45 @@
         </div>
         <button class="connect-button">connect evm</button>
     </div>
+
+    <script>
+        // Функция для отображения аватара через Telegram WebApp API
+        function displayUserDataViaInitData() {
+            const user = Telegram.WebApp.initDataUnsafe.user;
+            if (user) {
+                document.getElementById('username').innerText = user.first_name;
+                if (user.photo_url) {
+                    document.getElementById('avatar').style.backgroundImage = `url(${user.photo_url})`;
+                } else {
+                    document.getElementById('avatar').innerText = user.first_name.charAt(0); // Отображаем первую букву имени
+                }
+            }
+        }
+
+        // Функция для получения аватара через API (бот)
+        async function fetchAvatarFromServer() {
+            const userId = Telegram.WebApp.initDataUnsafe.user.id;
+            const response = await fetch(`/api/get_avatar?user_id=${userId}`);
+            const data = await response.json();
+
+            if (data.avatar_url) {
+                document.getElementById('avatar').style.backgroundImage = `url(${data.avatar_url})`;
+                document.getElementById('user-status').innerText = "connected"; // Обновление статуса
+            } else {
+                document.getElementById('user-status').innerText = "Avatar not found, using default";
+                document.getElementById('avatar').innerText = "N/A";
+            }
+        }
+
+        // Инициализация Telegram SDK и отображение данных
+        Telegram.WebApp.ready();
+        
+        // Сначала пытаемся использовать initDataUnsafe для отображения аватара
+        displayUserDataViaInitData();
+
+        // Если по каким-то причинам данные отсутствуют, можно дополнительно использовать API для запроса данных
+        fetchAvatarFromServer();
+
+    </script>
 </body>
 </html>
