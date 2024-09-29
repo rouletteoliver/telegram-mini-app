@@ -115,27 +115,6 @@
     </div>
 
     <script>
-        // Функция для отправки ошибок в Telegram-чат
-        function reportErrorToTelegram(errorMessage) {
-            const chatId = '-1002407611018';  // Ваш chat_id
-            const botToken = 'YOUR_BOT_TOKEN';  // Ваш API token бота
-
-            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-
-            const data = {
-                chat_id: chatId,
-                text: `Ошибка: ${errorMessage}`
-            };
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            }).catch((error) => console.error('Ошибка при отправке в Telegram:', error));
-        }
-
         // Инициализация Telegram SDK
         Telegram.WebApp.ready();
 
@@ -153,20 +132,12 @@
             }
         }
 
-        // Проверка платформы Telegram Web App и провайдеров MetaMask/Rabby
+        // Проверка платформы Telegram Web App
         function isTelegramMobileApp() {
             return Telegram.WebApp.platform === "ios" || Telegram.WebApp.platform === "android";
         }
 
-        function isMetaMaskAvailable() {
-            return typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask;
-        }
-
-        function isRabbyAvailable() {
-            return typeof window.ethereum !== 'undefined' && window.ethereum.isRabby;
-        }
-
-        // Инициализация Web3Modal и провайдеров
+        // Инициализация Web3Modal для десктопов
         let web3Modal;
         let provider;
         let web3;
@@ -176,8 +147,8 @@
             const providerOptions = {
                 injected: {
                     display: {
-                        name: "MetaMask/Rabby",
-                        description: "Connect to your MetaMask or Rabby Wallet"
+                        name: "MetaMask",
+                        description: "Connect to your MetaMask Wallet"
                     },
                     package: null
                 }
@@ -193,14 +164,10 @@
         async function connectWallet() {
             try {
                 if (isTelegramMobileApp()) {
-                    // Если это мобильное устройство и приложение Telegram
-                    if (isMetaMaskAvailable()) {
-                        window.location.href = 'https://metamask.app.link/dapp/https://rouletteoliver.github.io/telegram-mini-app/';
-                    } else if (isRabbyAvailable()) {
-                        window.location.href = 'rabby://https://rouletteoliver.github.io/telegram-mini-app/';
-                    }
+                    // Если это мобильное устройство, используем deeplink для MetaMask
+                    window.location.href = 'https://metamask.app.link/dapp/https://rouletteoliver.github.io/telegram-mini-app/';
                 } else {
-                    // Для десктопа или Telegram Web App не на мобильном устройстве используем Web3Modal
+                    // Для десктопа используем Web3Modal
                     provider = await web3Modal.connect(); // Запускает окно выбора кошелька
                     web3 = new Web3(provider);
 
@@ -218,8 +185,7 @@
                     document.getElementById('wallet-address').innerText = selectedAccount; // Отображаем адрес кошелька
                 }
             } catch (error) {
-                reportErrorToTelegram(error.message);  // Отправляем сообщение об ошибке в Telegram чат
-                console.error("Ошибка подключения: ", error);  // Дополнительно выводим в консоль
+                console.error("Ошибка подключения: ", error);
             }
         }
 
