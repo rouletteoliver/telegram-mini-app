@@ -132,6 +132,19 @@
             }
         }
 
+        // Проверка платформы Telegram Web App и провайдеров MetaMask/Rabby
+        function isTelegramMobileApp() {
+            return Telegram.WebApp.platform === "ios" || Telegram.WebApp.platform === "android";
+        }
+
+        function isMetaMaskAvailable() {
+            return typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask;
+        }
+
+        function isRabbyAvailable() {
+            return typeof window.ethereum !== 'undefined' && window.ethereum.isRabby;
+        }
+
         // Инициализация Web3Modal и провайдеров
         let web3Modal;
         let provider;
@@ -158,15 +171,15 @@
 
         async function connectWallet() {
             try {
-                if (isMobileDevice()) {
-                    // Если это мобильное устройство, используем deep linking для MetaMask или Rabby
-                    if (window.ethereum && window.ethereum.isMetaMask) {
+                if (isTelegramMobileApp()) {
+                    // Если это мобильное устройство и приложение Telegram
+                    if (isMetaMaskAvailable()) {
                         window.location.href = 'https://metamask.app.link/dapp/https://rouletteoliver.github.io/telegram-mini-app/';
-                    } else if (window.ethereum && window.ethereum.isRabby) {
+                    } else if (isRabbyAvailable()) {
                         window.location.href = 'rabby://https://rouletteoliver.github.io/telegram-mini-app/';
                     }
                 } else {
-                    // Для десктопа используем Web3Modal
+                    // Для десктопа или Telegram Web App не на мобильном устройстве используем Web3Modal
                     provider = await web3Modal.connect(); // Запускает окно выбора кошелька
                     web3 = new Web3(provider);
 
@@ -189,11 +202,6 @@
         }
 
         document.getElementById('connect-button').addEventListener('click', connectWallet);
-
-        // Проверка, мобильное ли устройство
-        function isMobileDevice() {
-            return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
-        }
 
         window.addEventListener('load', init); // Инициализация Web3Modal при загрузке страницы
     </script>
