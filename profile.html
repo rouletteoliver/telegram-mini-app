@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Profile</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -86,29 +87,6 @@
         .connect-button:hover {
             background-color: #0056b3;
         }
-        .log-console {
-            width: 80%;
-            height: 150px;
-            background-color: #333;
-            color: #fff;
-            overflow-y: scroll;
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            font-family: monospace;
-        }
-        .copy-button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 20px;
-            margin-top: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .copy-button:hover {
-            background-color: #218838;
-        }
     </style>
 </head>
 <body>
@@ -122,8 +100,8 @@
         <div id="wallet-address" class="profile-info">wallet not connected</div>
         <div class="player-stats">
             <div>
-                <div id="avatar" class="avatar"></div> <!-- Аватар -->
-                <div id="username">nickname</div> <!-- Имя пользователя -->
+                <div id="avatar" class="avatar"></div> <!-- Место для аватара -->
+                <div id="username">nickname</div> <!-- Отображение имени пользователя -->
             </div>
             <div>
                 <div>winrate</div>
@@ -131,87 +109,34 @@
                 <div>Поражений: 0</div>
             </div>
         </div>
-        <button id="connect-button" class="connect-button">connect evm (неактивна)</button>
-        
-        <!-- Мини консоль -->
-        <div class="log-console" id="log-console">
-            <p>Здесь будут отображаться логи...</p>
-        </div>
-        <button class="copy-button" onclick="copyLogs()">Copy Logs</button>
+        <button id="connect-button" class="connect-button">connect evm</button>
     </div>
 
     <script>
-        let connected = false; // Флаг для отслеживания подключения
-        let web3Modal;
-        let provider;
-        let web3;
-        let selectedAccount;
-
-        // Функция для добавления логов в мини-консоль
-        function addLog(logText) {
-            const logConsole = document.getElementById('log-console');
-            const newLog = document.createElement('p');
-            newLog.textContent = logText;
-            logConsole.appendChild(newLog); // Добавляем новый лог в консоль
+        // Функция для установки аватара
+        function setAvatar(avatarUrl) {
+            const avatarElement = document.getElementById('avatar');
+            if (avatarUrl) {
+                avatarElement.style.backgroundImage = `url(${avatarUrl})`; // Устанавливаем URL аватара
+                avatarElement.style.backgroundSize = 'cover';
+            } else {
+                avatarElement.innerText = "N/A"; // Заглушка, если нет аватара
+            }
         }
 
         // Инициализация Telegram SDK
         Telegram.WebApp.ready();
 
-        // Проверяем, что Telegram возвращает данные пользователя
-        if (Telegram.WebApp.initDataUnsafe) {
-            addLog("Telegram API успешно инициализирован");
-        } else {
-            addLog("Telegram API не инициализирован");
-        }
-
         // Получение данных пользователя из Telegram и обновление профиля
         const user = Telegram.WebApp.initDataUnsafe.user;
-        
         if (user) {
             document.getElementById('username').innerText = user.first_name;
-            const avatarElement = document.getElementById('avatar');
-
-            // Проверяем, что Telegram возвращает photo_url
-            if (user.photo_url) {
-                addLog(`URL фото пользователя: ${user.photo_url}`); // Лог для проверки URL фото
-                avatarElement.style.backgroundImage = `url(${user.photo_url})`;
-                avatarElement.style.backgroundSize = 'cover';
-                avatarElement.style.backgroundPosition = 'center';
-
-                // Проверим доступность изображения
-                const img = new Image();
-                img.onload = function() {
-                    addLog("Фото успешно загружено");
-                };
-                img.onerror = function() {
-                    addLog("Ошибка загрузки фото");
-                };
-                img.src = user.photo_url; // Попробуем загрузить изображение
-
-            } else {
-                // Если нет фотографии, отображаем первую букву имени
-                addLog("Аватар отсутствует, отображаем первую букву имени");
-                avatarElement.innerText = user.first_name.charAt(0);
-                avatarElement.style.backgroundColor = '#555'; // Фон для аватара без фото
-                avatarElement.style.color = '#fff'; // Цвет текста (первая буква)
-            }
+            // Пример: Мы можем получить URL аватара от вашего бота и использовать его здесь
+            const avatarUrl = user.photo_url || null;  // Здесь вы можете передавать URL, полученный от бота
+            setAvatar(avatarUrl);
         } else {
-            addLog("Ошибка получения данных пользователя");
+            setAvatar(null);
         }
-
-        // Функция для копирования логов
-        function copyLogs() {
-            const logConsole = document.getElementById('log-console');
-            const range = document.createRange();
-            range.selectNode(logConsole);
-            window.getSelection().removeAllRanges(); // Очищаем выделение
-            window.getSelection().addRange(range); // Выделяем текст
-            document.execCommand('copy'); // Копируем выделенный текст
-            window.getSelection().removeAllRanges(); // Очищаем выделение после копирования
-            alert("Логи скопированы!");
-        }
-
     </script>
 </body>
 </html>
