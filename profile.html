@@ -101,8 +101,8 @@
         <div id="wallet-address" class="profile-info">wallet not connected</div>
         <div class="player-stats">
             <div>
-                <div id="avatar" class="avatar"></div>
-                <div id="username">nickname</div>
+                <div id="avatar" class="avatar"></div> <!-- Аватар может отображать первую букву имени -->
+                <div id="username">nickname</div> <!-- Отображение имени пользователя -->
             </div>
             <div>
                 <div>winrate</div>
@@ -137,8 +137,8 @@
             }
         }
 
-        // Инициализация Web3Modal с кэшированием провайдера для всех устройств
-        function init() {
+        // Инициализация Web3Modal
+        function initWeb3Modal() {
             const providerOptions = {
                 injected: {
                     display: {
@@ -149,71 +149,50 @@
                 }
             };
 
-            web3Modal = new window.Web3Modal.default({
+            web3Modal = new Web3Modal({
                 cacheProvider: true, // Включаем кэширование провайдера
                 providerOptions,
                 theme: "dark"
             });
 
-            // Если провайдер был кэширован, автоматически подключаем кошелек
+            // Если есть кэшированный провайдер, автоматически подключаемся
             if (web3Modal.cachedProvider) {
-                console.log('Кэшированный провайдер найден, восстанавливаем подключение...');
-                connectWallet(); // Восстанавливаем подключение кошелька
-            } else {
-                console.log('Кэшированный провайдер не найден.');
-            }
-        }
-
-        // Функция для подключения или отключения кошелька
-        async function toggleWallet() {
-            if (connected) {
-                // Отключение
-                disconnectWallet();
-            } else {
-                // Подключение
                 connectWallet();
             }
         }
 
-        // Подключение через Web3Modal
+        // Подключение через MetaMask и подпись сообщения
         async function connectWallet() {
             try {
+                // Запрос на подключение через MetaMask
                 provider = await web3Modal.connect();
                 web3 = new Web3(provider);
 
-                provider.on("accountsChanged", (accounts) => {
-                    selectedAccount = accounts[0];
-                    document.getElementById('wallet-address').innerText = selectedAccount;
-                });
-
-                provider.on("chainChanged", () => {
-                    window.location.reload();
-                });
-
                 const accounts = await web3.eth.getAccounts();
                 selectedAccount = accounts[0];
-                document.getElementById('wallet-address').innerText = selectedAccount;
 
+                // Подписание сообщения для подтверждения подключения
+                const message = "Подтвердите подключение";
+                const signature = await web3.eth.personal.sign(message, selectedAccount, '');
+
+                // Сохраняем информацию о подключении
+                document.getElementById('wallet-address').innerText = selectedAccount;
                 connected = true;
                 updateButton();
+
+                console.log("Подключено и подписано сообщение:", signature);
             } catch (error) {
-                console.error("Ошибка подключения: ", error);
+                console.error("Ошибка подключения:", error);
             }
         }
 
+        // Отключение кошелька
         function disconnectWallet() {
-            // Отключение и сброс кэша
-            if (provider && provider.close) {
-                provider.close();
-            }
-            provider = null;
-            selectedAccount = null;
-            document.getElementById('wallet-address').innerText = "wallet not connected";
-
-            // Сбрасываем кэш провайдера
+            // Отключаем провайдера и очищаем кэш
             web3Modal.clearCachedProvider();
-
+            provider = null;
             connected = false;
+            document.getElementById('wallet-address').innerText = "wallet not connected";
             updateButton();
         }
 
@@ -227,9 +206,16 @@
             }
         }
 
-        document.getElementById('connect-button').addEventListener('click', toggleWallet);
+        document.getElementById('connect-button').addEventListener('click', function() {
+            if (connected) {
+                disconnectWallet();
+            } else {
+                connectWallet();
+            }
+        });
 
-        window.addEventListener('load', init); // Инициализация Web3Modal при загрузке страницы
+        window.addEventListener('load', initWeb3Modal);
     </script>
 </body>
 </html>
+
