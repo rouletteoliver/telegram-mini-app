@@ -101,8 +101,8 @@
         <div id="wallet-address" class="profile-info">wallet not connected</div>
         <div class="player-stats">
             <div>
-                <div id="avatar" class="avatar"></div> <!-- Аватар может отображать первую букву имени -->
-                <div id="username">nickname</div> <!-- Отображение имени пользователя -->
+                <div id="avatar" class="avatar"></div> <!-- Аватар отображает первую букву имени -->
+                <div id="username">nickname</div> <!-- Имя пользователя -->
             </div>
             <div>
                 <div>winrate</div>
@@ -119,6 +119,11 @@
         let provider;
         let web3;
         let selectedAccount;
+
+        // Определение, работает ли приложение на мобильной версии Telegram WebView
+        function isTelegramMobileApp() {
+            return Telegram.WebApp.platform === "ios" || Telegram.WebApp.platform === "android";
+        }
 
         // Инициализация Telegram SDK
         Telegram.WebApp.ready();
@@ -150,37 +155,37 @@
             };
 
             web3Modal = new Web3Modal({
-                cacheProvider: true, // Включаем кэширование провайдера
+                cacheProvider: false, // Кэширование отключено
                 providerOptions,
                 theme: "dark"
             });
-
-            // Если есть кэшированный провайдер, автоматически подключаемся
-            if (web3Modal.cachedProvider) {
-                connectWallet();
-            }
         }
 
         // Подключение через MetaMask и подпись сообщения
         async function connectWallet() {
             try {
-                // Запрос на подключение через MetaMask
-                provider = await web3Modal.connect();
-                web3 = new Web3(provider);
+                if (isTelegramMobileApp()) {
+                    // Если это мобильная версия в Telegram WebView, используем deeplink для MetaMask
+                    window.location.href = 'https://metamask.app.link/dapp/https://ваш-домен';
+                } else {
+                    // Для десктопа используем Web3Modal для подключения
+                    provider = await web3Modal.connect();
+                    web3 = new Web3(provider);
 
-                const accounts = await web3.eth.getAccounts();
-                selectedAccount = accounts[0];
+                    const accounts = await web3.eth.getAccounts();
+                    selectedAccount = accounts[0];
 
-                // Подписание сообщения для подтверждения подключения
-                const message = "Подтвердите подключение";
-                const signature = await web3.eth.personal.sign(message, selectedAccount, '');
+                    // Подписание сообщения для подтверждения подключения
+                    const message = "Подтвердите подключение";
+                    const signature = await web3.eth.personal.sign(message, selectedAccount, '');
 
-                // Сохраняем информацию о подключении
-                document.getElementById('wallet-address').innerText = selectedAccount;
-                connected = true;
-                updateButton();
+                    // Отображаем адрес подключенного кошелька
+                    document.getElementById('wallet-address').innerText = selectedAccount;
+                    connected = true; // Обновляем состояние подключения
+                    updateButton(); // Обновляем текст кнопки
 
-                console.log("Подключено и подписано сообщение:", signature);
+                    console.log("Подключено и подписано сообщение:", signature);
+                }
             } catch (error) {
                 console.error("Ошибка подключения:", error);
             }
@@ -188,21 +193,19 @@
 
         // Отключение кошелька
         function disconnectWallet() {
-            // Отключаем провайдера и очищаем кэш
-            web3Modal.clearCachedProvider();
             provider = null;
-            connected = false;
-            document.getElementById('wallet-address').innerText = "wallet not connected";
-            updateButton();
+            connected = false; // Сбрасываем состояние подключения
+            document.getElementById('wallet-address').innerText = "wallet not connected"; // Обновляем интерфейс
+            updateButton(); // Обновляем текст кнопки
         }
 
         // Обновление кнопки в зависимости от состояния подключения
         function updateButton() {
             const button = document.getElementById('connect-button');
             if (connected) {
-                button.innerText = "disconnect evm";
+                button.innerText = "disconnect evm"; // Изменение текста кнопки при подключении
             } else {
-                button.innerText = "connect evm";
+                button.innerText = "connect evm"; // Текст кнопки при отключении
             }
         }
 
@@ -218,4 +221,3 @@
     </script>
 </body>
 </html>
-
