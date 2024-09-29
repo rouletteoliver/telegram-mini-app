@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Profile</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://unpkg.com/@walletconnect/web3-provider@1.7.8/dist/umd/index.min.js"></script>
+    <script src="https://unpkg.com/web3modal"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -91,7 +94,7 @@
     </div>
     <div class="content">
         <div class="profile-header">Баланс: 0</div>
-        <div class="profile-info">not connected</div>
+        <div id="wallet-address" class="profile-info">wallet not connected</div>
         <div class="player-stats">
             <div>
                 <div class="avatar"></div>
@@ -103,7 +106,50 @@
                 <div>Поражений: 0</div>
             </div>
         </div>
-        <button class="connect-button">connect evm</button>
+        <button id="connect-button" class="connect-button">connect evm</button>
     </div>
+
+    <script>
+        // Инициализация Web3Modal и провайдеров
+        let web3Modal;
+        let provider;
+        let web3;
+        let selectedAccount;
+
+        function init() {
+            const providerOptions = {
+                walletconnect: {
+                    package: window.WalletConnectProvider.default, // Пакет WalletConnect
+                    options: {
+                        infuraId: "747499a6c52b4ed482a4899ae595b156" // Ваш Infura ID
+                    }
+                }
+            };
+
+            web3Modal = new window.Web3Modal.default({
+                cacheProvider: false, // Отключает кэширование провайдера
+                providerOptions, // Подключаем провайдеры
+                theme: "dark"
+            });
+        }
+
+        async function connectWallet() {
+            try {
+                provider = await web3Modal.connect(); // Запускает окно выбора кошелька
+                web3 = new Web3(provider);
+
+                const accounts = await web3.eth.getAccounts();
+                selectedAccount = accounts[0];
+
+                document.getElementById('wallet-address').innerText = selectedAccount; // Отображаем адрес кошелька
+            } catch (error) {
+                console.error("Ошибка подключения: ", error);
+            }
+        }
+
+        document.getElementById('connect-button').addEventListener('click', connectWallet);
+        window.addEventListener('load', init); // Инициализация Web3Modal при загрузке страницы
+    </script>
 </body>
 </html>
+
