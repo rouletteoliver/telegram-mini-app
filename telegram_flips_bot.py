@@ -28,11 +28,4 @@ def send_welcome(message):
     web_app_button = InlineKeyboardButton("FlipS", web_app=web_app_info)
     markup.add(web_app_button)
     
-    # Попытка отправить сообщение с кнопкой
-    try:
-        bot.send_message(message.chat.id, "Нажмите кнопку ниже для начала игры!", reply_markup=markup)
-        print("Сообщение с кнопкой отправлено")
-    except Exception as e:
-        print(f"Ошибка отправки сообщения: {e}")
-
 bot.polling(none_stop=True, interval=0)  # Параметры для устойчивого подключения
