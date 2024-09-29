@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Profile</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -62,13 +63,11 @@
             text-align: center;
         }
         .avatar {
-            width: 150px; /* Увеличил размер аватара */
-            height: 150px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             background-color: #555;
             margin-bottom: 5px;
-            background-size: cover;
-            background-position: center;
         }
         .connect-button {
             padding: 10px 20px;
@@ -82,6 +81,27 @@
         .connect-button:hover {
             background-color: #0056b3;
         }
+        .log-window {
+            width: 100%;
+            height: 150px;
+            background-color: #1a1a1a;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 10px;
+            overflow-y: auto;
+            font-family: monospace;
+            margin-top: 20px;
+        }
+        .copy-button {
+            float: right;
+            margin-bottom: 10px;
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -92,11 +112,11 @@
     </div>
     <div class="content">
         <div class="profile-header">Баланс: 0</div>
-        <div class="profile-info" id="user-status">not connected</div>
+        <div class="profile-info">not connected</div>
         <div class="player-stats">
             <div>
-                <div id="avatar" class="avatar"></div> <!-- Место для аватара -->
-                <div id="username">nickname</div> <!-- Место для имени пользователя -->
+                <div class="avatar"></div>
+                <div>nickname</div>
             </div>
             <div>
                 <div>winrate</div>
@@ -105,46 +125,36 @@
             </div>
         </div>
         <button class="connect-button">connect evm</button>
+
+        <!-- Окно для логов и кнопка копирования -->
+        <div class="log-window" id="log-window">
+            Здесь будут отображаться логи...
+        </div>
+        <button class="copy-button" onclick="copyLogs()">Copy</button>
     </div>
 
     <script>
-        // Функция для отображения аватара через Telegram WebApp API
-        function displayUserDataViaInitData() {
-            const user = Telegram.WebApp.initDataUnsafe.user;
-            if (user) {
-                document.getElementById('username').innerText = user.first_name;
-                if (user.photo_url) {
-                    document.getElementById('avatar').style.backgroundImage = `url(${user.photo_url})`;
-                } else {
-                    document.getElementById('avatar').innerText = user.first_name.charAt(0); // Отображаем первую букву имени
-                }
-            }
+        // Функция для копирования логов
+        function copyLogs() {
+            const logWindow = document.getElementById('log-window');
+            const range = document.createRange();
+            range.selectNodeContents(logWindow);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            document.execCommand('copy');
+            alert('Логи скопированы!');
         }
 
-        // Функция для получения аватара через API (бот)
-        async function fetchAvatarFromServer() {
-            const userId = Telegram.WebApp.initDataUnsafe.user.id;
-            const response = await fetch(`/api/get_avatar?user_id=${userId}`);
-            const data = await response.json();
-
-            if (data.avatar_url) {
-                document.getElementById('avatar').style.backgroundImage = `url(${data.avatar_url})`;
-                document.getElementById('user-status').innerText = "connected"; // Обновление статуса
-            } else {
-                document.getElementById('user-status').innerText = "Avatar not found, using default";
-                document.getElementById('avatar').innerText = "N/A";
-            }
+        // Пример добавления лога
+        function addLog(message) {
+            const logWindow = document.getElementById('log-window');
+            logWindow.innerHTML += `<div>${message}</div>`;
+            logWindow.scrollTop = logWindow.scrollHeight; // Прокрутка вниз
         }
 
-        // Инициализация Telegram SDK и отображение данных
-        Telegram.WebApp.ready();
-        
-        // Сначала пытаемся использовать initDataUnsafe для отображения аватара
-        displayUserDataViaInitData();
-
-        // Если по каким-то причинам данные отсутствуют, можно дополнительно использовать API для запроса данных
-        fetchAvatarFromServer();
-
+        // Пример добавления тестового лога
+        addLog('Логирование запущено...');
     </script>
 </body>
 </html>
