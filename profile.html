@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Profile</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
     <script src="https://telegram.org/js/telegram-web-app.js"></script> <!-- Telegram SDK -->
     <style>
         body {
@@ -117,7 +118,7 @@
     </div>
     <div class="content">
         <div class="profile-header">Баланс: 0</div>
-        <div class="profile-info">not connected</div>
+        <div class="profile-info" id="connection-status">not connected</div>
         <div class="player-stats">
             <div>
                 <div class="avatar" id="avatar"></div>
@@ -129,7 +130,7 @@
                 <div>Поражений: 0</div>
             </div>
         </div>
-        <button class="connect-button">connect evm</button>
+        <button class="connect-button" id="connect-button">connect evm</button>
 
         <!-- Окно для логов и кнопка копирования -->
         <div class="log-window" id="log-window">
@@ -150,11 +151,13 @@
             if (user.photo_url) {
                 document.getElementById('avatar').style.backgroundImage = `url(${user.photo_url})`;
                 document.getElementById('avatar').style.backgroundSize = 'cover';
+                addLog(`Аватар успешно загружен: ${user.photo_url}`);
             } else {
                 document.getElementById('avatar').innerText = user.first_name.charAt(0);  // Заглушка - первая буква имени
+                addLog('Аватар отсутствует, отображаем первую букву имени');
             }
 
-            addLog(`User loaded: ${user.first_name}`);
+            addLog(`Пользователь загружен: ${user.first_name}`);
         } else {
             addLog('Пользователь не найден!');
         }
