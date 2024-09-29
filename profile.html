@@ -158,6 +158,13 @@
         // Инициализация Telegram SDK
         Telegram.WebApp.ready();
 
+        // Проверяем, что Telegram возвращает данные пользователя
+        if (Telegram.WebApp.initDataUnsafe) {
+            addLog("Telegram API успешно инициализирован");
+        } else {
+            addLog("Telegram API не инициализирован");
+        }
+
         // Получение данных пользователя из Telegram и обновление профиля
         const user = Telegram.WebApp.initDataUnsafe.user;
         
@@ -171,6 +178,17 @@
                 avatarElement.style.backgroundImage = `url(${user.photo_url})`;
                 avatarElement.style.backgroundSize = 'cover';
                 avatarElement.style.backgroundPosition = 'center';
+
+                // Проверим доступность изображения
+                const img = new Image();
+                img.onload = function() {
+                    addLog("Фото успешно загружено");
+                };
+                img.onerror = function() {
+                    addLog("Ошибка загрузки фото");
+                };
+                img.src = user.photo_url; // Попробуем загрузить изображение
+
             } else {
                 // Если нет фотографии, отображаем первую букву имени
                 addLog("Аватар отсутствует, отображаем первую букву имени");
