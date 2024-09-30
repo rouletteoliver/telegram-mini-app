@@ -1,61 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Mini App - Start</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script>
-    Telegram.WebApp.ready();
-    Telegram.WebApp.expand(); // Развертывание мини-приложения на полный экран
-    </script>
-    <style>
-        body {
-            background-color: #2b2b2b;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            margin: 0;
-        }
-        .nav {
-            background-color: #f0f0f0;
-            padding: 10px;
-            display: flex;
-            justify-content: space-around;
-            border-bottom: 2px solid #ccc;
-        }
-        .nav button {
-            background: none;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            color: #007bff;
-        }
-        .content {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-        }
-    </style>
-</head>
-<body>
-    <div class="nav">
-        <button onclick="window.location.href='search.html'">search game</button>
-        <button onclick="window.location.href='game.html'">game</button>
-        <button onclick="window.location.href='profile.html'">profile</button>
-    </div>
-    <div class="content">
-        <p>кек</p>
-    </div>
-    <script>
-        Telegram.WebApp.ready(); // Инициализация Telegram Web Apps SDK
-    </script>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Vite + React + TS</title>
+    </head>
+    <body style="height: 100vh; overflow: hidden">
+        <div id="root"></div>
+        <script type="module" src="/src/main.tsx"></script>
+    </body>
 </html>
