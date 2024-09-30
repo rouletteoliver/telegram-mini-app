@@ -10,15 +10,15 @@ bot = telebot.TeleBot(API_TOKEN)
 # Инициализация Flask
 app = Flask(__name__)
 
-# Маршрут для обслуживания основного файла index.html
+# Маршрут для обслуживания основного файла index.html в корневой папке (main)
 @app.route('/')
 def serve():
-    return send_from_directory('public', 'index.html')
+    return send_from_directory('', 'index.html')  # Путь к файлу в корневой папке
 
-# Маршрут для обслуживания статических файлов
+# Маршрут для обслуживания статических файлов (если есть другие файлы)
 @app.route('/<path:path>')
 def static_files(path):
-    return send_from_directory('public', path)
+    return send_from_directory('', path)  # Путь к другим статическим файлам в корне
 
 print("Бот запущен...")  # Проверка, что бот вообще стартует
 
@@ -58,3 +58,4 @@ if __name__ == "__main__":
 
     # Запуск бота
     bot.polling(none_stop=True, interval=0)  # Параметры для устойчивого подключения
+
