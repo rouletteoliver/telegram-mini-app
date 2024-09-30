@@ -1,9 +1,24 @@
+import os
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
+from flask import Flask, send_from_directory
 
 # Твой API токен
 API_TOKEN = '7713287680:AAEjz5BhCiIYSQHllKj33l4DmpxqREcbuPU'
 bot = telebot.TeleBot(API_TOKEN)
+
+# Инициализация Flask
+app = Flask(__name__)
+
+# Маршрут для обслуживания основного файла index.html
+@app.route('/')
+def serve():
+    return send_from_directory('public', 'index.html')
+
+# Маршрут для обслуживания статических файлов
+@app.route('/<path:path>')
+def static_files(path):
+    return send_from_directory('public', path)
 
 print("Бот запущен...")  # Проверка, что бот вообще стартует
 
@@ -35,4 +50,11 @@ def send_welcome(message):
     except Exception as e:
         print(f"Ошибка отправки сообщения: {e}")
 
-bot.polling(none_stop=True, interval=0)  # Параметры для устойчивого подключения
+# Запуск Flask и бота
+if __name__ == "__main__":
+    # Запуск Flask сервера
+    from threading import Thread
+    Thread(target=lambda: app.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))).start()
+
+    # Запуск бота
+    bot.polling(none_stop=True, interval=0)  # Параметры для устойчивого подключения
